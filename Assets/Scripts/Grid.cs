@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    [SerializeField]
-    private  Vector2 _gridSize;
-    private Vector2 _gridOffset;
-    [SerializeField]
-    private Sprite _cellSprite;
+    [SerializeField] private  Vector2 _gridSize;
+    [SerializeField] private Sprite _cellSprite;
+   
+    private Vector2 _gridOffset; 
     private Vector2 _cellSize;
     private Vector2 _cellScale;
 
