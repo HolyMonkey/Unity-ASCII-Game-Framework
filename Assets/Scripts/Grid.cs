@@ -5,10 +5,18 @@ using TMPro;
 
 public class Grid : MonoBehaviour
 {
+    [Tooltip ("Add gird with GridCamera component")]
+    public GridCamera gridCam;
+
     private Vector2 _gridOffset;
     private Vector2 _cellSize=new Vector2(1,1);
     private Vector2 _cellScale;
     private GameObject [,] _grid;
+
+    public int cellSize
+    {
+        get { return (int)_cellSize.x; }
+    }
 
     public void SetCellSize(int cellSize)
     {
