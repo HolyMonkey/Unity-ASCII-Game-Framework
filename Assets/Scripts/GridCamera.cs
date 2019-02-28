@@ -15,7 +15,6 @@ public class GridCamera : MonoBehaviour
 
     private void ChangePosition(Vector3 newPos,ref Vector3 _currentPos)
     {
-        
         Camera.main.transform.position = newPos;
         _currentPos = Camera.main.transform.position;
     }
