@@ -9,13 +9,13 @@ public class GridCamera : MonoBehaviour
 
     void Start()
     {
-        gameObject.GetComponent<Camera>().orthographic = true;
+        GetComponent<Camera>().orthographic = true;
         _currentPosition = transform.position;
     }
 
     private void ChangePosition(Vector3 newPosition)
     {
-        gameObject.transform.position = newPosition;
+        transform.position = newPosition;
         _currentPosition = transform.position;
     }
 
