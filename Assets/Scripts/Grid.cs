@@ -6,19 +6,19 @@ using TMPro;
 public class Grid : MonoBehaviour
 {
     [Tooltip ("Add gird with GridCamera component")]
-    public GridCamera GridCam;
+    public GridCamera Camera;
 
     private Vector2 _gridOffset;
-    private Vector2 _cellSize=new Vector2(1,1);
+    private Vector2 _cellSize = new Vector2(1,1);
     private Vector2 _cellScale;
     private GameObject [,] _grid;
 
-    public int CellSize
+    public float CellSize
     {
-        get { return (int)_cellSize.x; }
+        get { return _cellSize.x; }
     }
 
-    public void SetCellSize(int cellSize)
+    public void SetCellSize(float cellSize)
     {
         _cellSize = new Vector2(cellSize,cellSize);
     }
@@ -35,12 +35,12 @@ public class Grid : MonoBehaviour
 
         cellObject.transform.localScale = new Vector2(_cellScale.x, _cellScale.y);
 
-        _gridOffset.x = -(X/ 2) + _cellSize.x / 2;
+        _gridOffset.x = - (X / 2) + _cellSize.x / 2;
         _gridOffset.y = (Y / 2) - _cellSize.y / 2;
 
         for (int row = 0; row < Y; row++)
         {
-            for (int col = 0; col <X; col++)
+            for (int col = 0; col < X; col++)
             {
                 Vector2 pos = new Vector2(col * _cellSize.x + _gridOffset.x, -row * _cellSize.y + _gridOffset.y);
 
@@ -61,10 +61,10 @@ public class Grid : MonoBehaviour
         cellSymbol.AddComponent<TextMeshPro>().text = symbol;
         TextMeshPro tmp = cellSymbol.GetComponent<TextMeshPro>();
 
-        tmp.rectTransform.sizeDelta= new Vector2(_cellSize.x,_cellSize.y*1.5f);
+        tmp.rectTransform.sizeDelta = new Vector2(_cellSize.x,_cellSize.y*1.5f);
 
         cellSymbol.transform.SetParent(_grid[X, Y].transform);
-        cellSymbol.transform.localPosition= Vector2.zero;
+        cellSymbol.transform.localPosition = Vector2.zero;
 
         tmp.enableAutoSizing = true;
         tmp.color = color;

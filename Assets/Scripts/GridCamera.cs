@@ -5,38 +5,38 @@ using UnityEngine;
 public class GridCamera : MonoBehaviour
 {
     public Grid WorkGrid;
-    private Vector3 _currentPos;
+    private Vector3 _currentPosition;
 
     void Start()
     {
         gameObject.GetComponent<Camera>().orthographic = true;
-        _currentPos = gameObject.transform.position;
+        _currentPosition = transform.position;
     }
 
-    private void ChangePosition(Vector3 newPos,ref Vector3 currentPos)
+    private void ChangePosition(Vector3 newPosition)
     {
-        gameObject.transform.position = newPos;
-        currentPos = gameObject.transform.position;
+        gameObject.transform.position = newPosition;
+        _currentPosition = gameObject.transform.position;
     }
 
     public void MoveUp()
     {
-        ChangePosition(new Vector3(_currentPos.x, _currentPos.y + WorkGrid.CellSize,_currentPos.z), ref _currentPos);
+        ChangePosition(new Vector3(_currentPosition.x, _currentPosition.y + WorkGrid.CellSize, _currentPosition.z));
     }
 
     public void MoveDown()
     {
-        ChangePosition(new Vector3(_currentPos.x, _currentPos.y - WorkGrid.CellSize, _currentPos.z), ref _currentPos);
+        ChangePosition(new Vector3(_currentPosition.x, _currentPosition.y - WorkGrid.CellSize, _currentPosition.z));
     }
 
     public void MoveLeft()
     {
-        ChangePosition(new Vector3(_currentPos.x - WorkGrid.CellSize, _currentPos.y, _currentPos.z), ref _currentPos);
+        ChangePosition(new Vector3(_currentPosition.x - WorkGrid.CellSize, _currentPosition.y, _currentPosition.z));
     }
 
     public void MoveRight()
     {
-        ChangePosition(new Vector3(_currentPos.x + WorkGrid.CellSize, _currentPos.y, _currentPos.z), ref _currentPos);
+        ChangePosition(new Vector3(_currentPosition.x + WorkGrid.CellSize, _currentPosition.y, _currentPosition.z));
     }
 
 }
