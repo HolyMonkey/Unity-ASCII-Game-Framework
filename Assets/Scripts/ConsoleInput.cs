@@ -7,6 +7,7 @@ using TMPro;
 public class ConsoleInput : MonoBehaviour
 {
     public GameObject InputField;
+    public Camera MainCamera;
     public delegate void GetFunc (string input);
 
     private GameObject _inputField;
@@ -14,7 +15,7 @@ public class ConsoleInput : MonoBehaviour
     public void ShowstringInputField(GetFunc OnEnter)
     {
         _inputField = Instantiate(InputField);
-        _inputField.GetComponentInChildren<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
+        _inputField.GetComponentInChildren<Canvas>().worldCamera = MainCamera;
 
         _inputField.GetComponentInChildren<TMP_InputField>().onEndEdit.AddListener(delegate { OnEnter(_inputField.GetComponentInChildren<TMP_InputField>().text); Destroy(_inputField); });
     }
