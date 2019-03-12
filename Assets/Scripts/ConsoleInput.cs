@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-
+using System;
 
 public class ConsoleInput : MonoBehaviour
 {
     public GameObject InputField;
     public Camera MainCamera;
-    public delegate void GetFunc (string input);
 
-    private GameObject _inputField;
-
-    public void ShowstringInputField(GetFunc OnEnter)
+    public void ShowstringInputField(Action<string> onSubmit)
     {
-        _inputField = Instantiate(InputField);
-        _inputField.GetComponentInChildren<Canvas>().worldCamera = MainCamera;
+        InputField.SetActive(true);
+        InputField.GetComponentInChildren<Canvas>().worldCamera = MainCamera;
 
-        _inputField.GetComponentInChildren<TMP_InputField>().onEndEdit.AddListener(delegate { OnEnter(_inputField.GetComponentInChildren<TMP_InputField>().text); Destroy(_inputField); });
+        InputField.GetComponentInChildren<TMP_InputField>().onSubmit.AddListener(delegate {
+            onSubmit(InputField.GetComponentInChildren<TMP_InputField>().text);
+            InputField.SetActive(false);
+        });
     }
 }
