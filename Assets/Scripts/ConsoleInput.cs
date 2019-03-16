@@ -6,17 +6,18 @@ using System;
 
 public class ConsoleInput : MonoBehaviour
 {
-    public GameObject InputField;
-    public Camera MainCamera;
-
-    public void ShowstringInputField(Action<string> onSubmit)
+    private void Start()
     {
-        InputField.SetActive(true);
-        InputField.GetComponentInChildren<Canvas>().worldCamera = MainCamera;
+        gameObject.SetActive(false);
+    }
 
-        InputField.GetComponentInChildren<TMP_InputField>().onSubmit.AddListener(delegate {
-            onSubmit(InputField.GetComponentInChildren<TMP_InputField>().text);
-            InputField.SetActive(false);
+    public void ShowStringInputField(Action<string> onSubmit)
+    {
+        gameObject.SetActive(true);
+
+        GetComponent<TMP_InputField>().onSubmit.AddListener(delegate {
+            onSubmit(GetComponent<TMP_InputField>().text);
+            gameObject.SetActive(false);
         });
     }
 }

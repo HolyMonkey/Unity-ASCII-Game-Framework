@@ -25,9 +25,11 @@ public class Grid : MonoBehaviour
 
     public void UpdateView(int X, int Y)
     {
-        GameObject cellObject = new GameObject();
-        cellObject.name = "Cell";
-        
+        GameObject cellObject = new GameObject
+        {
+            name = "Cell"
+        };
+
         _grid = new GameObject[X,Y];
 
         _cellScale.x = 1 / _cellSize.x;
@@ -35,8 +37,8 @@ public class Grid : MonoBehaviour
 
         cellObject.transform.localScale = new Vector2(_cellScale.x, _cellScale.y);
 
-        _gridOffset.x = - (X / 2) + _cellSize.x / 2;
-        _gridOffset.y = (Y / 2) - _cellSize.y / 2;
+        _gridOffset.x = - (X / 2) * _cellSize.x + _cellSize.x / 2;
+        _gridOffset.y = (Y / 2) * _cellSize.y - _cellSize.y / 2;
 
         for (int row = 0; row < Y; row++)
         {
@@ -48,17 +50,21 @@ public class Grid : MonoBehaviour
                 _grid[col, row].transform.parent = gameObject.transform;
             }
         }
-
+        
         Destroy(cellObject);
-
     }
 
-    public void Write(int X, int Y, string symbol, Color color)
+    public void Write(int X, int Y, char symbol, Color color)
     {
-        GameObject cellSymbol = new GameObject();
-        cellSymbol.name = "Symbol";
+        if(_grid[X, Y].transform.childCount > 0)
+            Destroy(_grid[X,Y].transform.GetChild(0).gameObject);
 
-        cellSymbol.AddComponent<TextMeshPro>().text = symbol;
+        GameObject cellSymbol = new GameObject
+        {
+            name = symbol.ToString()
+        };
+
+        cellSymbol.AddComponent<TextMeshPro>().text = symbol.ToString();
         TextMeshPro tmp = cellSymbol.GetComponent<TextMeshPro>();
 
         tmp.rectTransform.sizeDelta = new Vector2(_cellSize.x,_cellSize.y*1.5f);
@@ -70,5 +76,13 @@ public class Grid : MonoBehaviour
         tmp.color = color;
         tmp.fontSizeMin = 0f;
         tmp.alignment = TextAlignmentOptions.Center;
+    }
+
+    public bool CheckForSymbol(int X, int Y, char symbol)
+    {
+        if (_grid[X, Y].transform.Find(symbol.ToString()))
+            return true;
+        else
+            return false;
     }
 }
