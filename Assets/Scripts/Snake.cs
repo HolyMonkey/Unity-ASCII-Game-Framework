@@ -48,7 +48,7 @@ public class Snake : MonoBehaviour
             X = Random.Range(0, _gridLength);
             Y = Random.Range(0, _gridHeight);
         }
-        while (Grid.CheckForSymbol(X, Y, _snake));
+        while (Grid.HasSymbol(X, Y, _snake));
        
         Grid.Write(X, Y,_food,Color.red);
     }
@@ -79,12 +79,11 @@ public class Snake : MonoBehaviour
             }
         }
 
-        if ((_snakePosX + _dirX >= 0 && _snakePosX + _dirX < _gridLength && _snakePosY + _dirY >= 0 && _snakePosY + _dirY < _gridHeight) && !Grid.CheckForSymbol(_snakePosX + _dirX, _snakePosY + _dirY,_snake))
+        if ((_snakePosX + _dirX >= 0 && _snakePosX + _dirX < _gridLength && _snakePosY + _dirY >= 0 && _snakePosY + _dirY < _gridHeight) && !Grid.HasSymbol(_snakePosX + _dirX, _snakePosY + _dirY,_snake))
         {
             Vector2 currentPosition = new Vector2(_snakePosX, _snakePosY);
-            Grid.Write(_snakePosX += _dirX, _snakePosY += _dirY, _snake, Color.yellow);
 
-            if (Grid.CheckForSymbol(_snakePosX, _snakePosY, _food))
+            if (Grid.HasSymbol(_snakePosX + _dirX, _snakePosY + _dirY, _food))
             {
                 tail.Insert(0, currentPosition);
                 SpawnFood();
@@ -99,6 +98,7 @@ public class Snake : MonoBehaviour
             else
                 Grid.Write((int)currentPosition.x, (int)currentPosition.y, _background, Color.black);
 
+            Grid.Write(_snakePosX += _dirX, _snakePosY += _dirY, _snake, Color.yellow);
             TextBox.text = (tail.Count + 1).ToString();
         }
         else

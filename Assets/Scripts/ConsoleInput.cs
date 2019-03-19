@@ -6,6 +6,8 @@ using System;
 
 public class ConsoleInput : MonoBehaviour
 {
+    public TMP_InputField InputField;
+
     private void Start()
     {
         gameObject.SetActive(false);
@@ -15,8 +17,8 @@ public class ConsoleInput : MonoBehaviour
     {
         gameObject.SetActive(true);
 
-        GetComponent<TMP_InputField>().onSubmit.AddListener(delegate {
-            onSubmit(GetComponent<TMP_InputField>().text);
+        InputField.onSubmit.AddListener(delegate {
+            onSubmit(InputField.text);
             gameObject.SetActive(false);
         });
     }
