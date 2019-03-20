@@ -20,7 +20,7 @@ public class Snake : MonoBehaviour
     private char _snake = '@';
     private char _background = '#';
 
-    List<Vector2> tail = new List<Vector2>();
+    private List<Vector2> tail = new List<Vector2>();
 
     void Start()
     {
