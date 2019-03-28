@@ -18,7 +18,7 @@ public class ConsoleInput : MonoBehaviour
         gameObject.SetActive(true);
 
         InputField.onSubmit.AddListener(delegate {
-            onSubmit(InputField.text);
+            onSubmit?.Invoke(InputField.text);
             gameObject.SetActive(false);
         });
     }
