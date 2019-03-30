@@ -6,7 +6,7 @@ using TMPro;
 
 public class Cell : MonoBehaviour
 {
-    public TextMeshPro Symbol;
+    [SerializeField] private TextMeshPro Symbol;
 
     public string Text
     {
