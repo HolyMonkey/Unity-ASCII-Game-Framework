@@ -19,6 +19,7 @@ public class Snake : MonoBehaviour
     private char _food = 'A';
     private char _snake = '@';
     private char _background = '#';
+    private Color _backgroundColor = Color.black;
 
     private List<Vector2> tail = new List<Vector2>();
 
@@ -27,11 +28,11 @@ public class Snake : MonoBehaviour
         float _cellSize = 0.5f;
 
         Grid.SetCellSize(_cellSize);
-        Grid.UpdateView(_gridLength, _gridHeight);
+        Grid.Reset(_gridLength, _gridHeight);
 
         for (int i = 0; i < _gridLength; i++)
             for (int j = 0; j < _gridHeight; j++)
-                Grid.Write(i, j,_background, Color.black);
+                Grid.Write(i, j,_background, _backgroundColor);
 
         Grid.Write(_snakePosX, _snakePosY, _snake, Color.yellow);
 
@@ -90,13 +91,13 @@ public class Snake : MonoBehaviour
             }
             else if (tail.Count>0)
             {
-                Grid.Write((int)tail[tail.Count - 1].x, (int)tail[tail.Count - 1].y, _background, Color.black);
+                Grid.Write((int)tail[tail.Count - 1].x, (int)tail[tail.Count - 1].y, _background, _backgroundColor);
                 tail[tail.Count-1] = currentPosition;
                 tail.Insert(0, tail[tail.Count - 1]);
                 tail.RemoveAt(tail.Count - 1);
             }
             else
-                Grid.Write((int)currentPosition.x, (int)currentPosition.y, _background, Color.black);
+                Grid.Write((int)currentPosition.x, (int)currentPosition.y, _background, _backgroundColor);
 
             Grid.Write(_snakePosX += _dirX, _snakePosY += _dirY, _snake, Color.yellow);
             TextBox.text = (tail.Count + 1).ToString();
