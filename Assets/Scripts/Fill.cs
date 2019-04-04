@@ -19,7 +19,7 @@ public class Fill
     {
         for (int i = 0; i < width; i++)
             for (int j = 0; j < height; j++)
-                _currentGrid.Write(x + i, y - j, symbol, color);
+                _currentGrid.Write(x + i, y + j, symbol, color);
     }
 
 }

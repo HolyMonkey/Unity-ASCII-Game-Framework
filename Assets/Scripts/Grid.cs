@@ -14,7 +14,7 @@ public class Grid : MonoBehaviour
     private Vector2 _cellScale;
     private Cell [,] _grid;
 
-    private void Start()
+    private void Awake()
     {
         Fill = new Fill(this);
     }
