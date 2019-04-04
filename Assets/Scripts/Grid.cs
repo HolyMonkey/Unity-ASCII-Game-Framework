@@ -7,11 +7,22 @@ public class Grid : MonoBehaviour
     [Tooltip ("Add gird with GridCamera component")]
     public GridCamera Camera;
     public Cell CellTemplate;
+    public Fill Fill;
 
     private Vector2 _gridOffset;
     private Vector2 _cellSize = new Vector2(1,1);
     private Vector2 _cellScale;
     private Cell [,] _grid;
+
+    [SerializeField] private Canvas _mainCanvas;
+    [SerializeField] private GameObject _cellPref;
+
+    private void Start()
+    {
+        Fill.CellSize = _cellSize;
+        Fill.Parent = _mainCanvas.transform;
+        Fill.CellPrefab = _cellPref;
+    }
 
     public float CellSize
     {
@@ -21,6 +32,7 @@ public class Grid : MonoBehaviour
     public void SetCellSize(float cellSize)
     {
         _cellSize = new Vector2(cellSize,cellSize);
+        Fill.CellSize = _cellSize;
     }
 
     public void Reset(int x, int y)
