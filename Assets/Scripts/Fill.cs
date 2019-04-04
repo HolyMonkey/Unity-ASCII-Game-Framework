@@ -6,15 +6,20 @@ using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
 
-public class Fill : MonoBehaviour
+public class Fill
 {
-    public Grid CurrentGrid;
+    private Grid _currentGrid;
+
+    public Fill(Grid grid)
+    {
+        _currentGrid = grid;
+    }
 
     public void Rect(int x, int y, int width, int height, char symbol, Color color)
     {
         for (int i = 0; i < width; i++)
             for (int j = 0; j < height; j++)
-                CurrentGrid.Write(x + i, y - j, symbol, color);
+                _currentGrid.Write(x + i, y - j, symbol, color);
     }
 
 }

@@ -7,7 +7,7 @@ public class Grid : MonoBehaviour
     [Tooltip ("Add gird with GridCamera component")]
     public GridCamera Camera;
     public Cell CellTemplate;
-    public Fill Fill = new Fill();
+    public Fill Fill;
 
     private Vector2 _gridOffset;
     private Vector2 _cellSize = new Vector2(1,1);
@@ -16,7 +16,7 @@ public class Grid : MonoBehaviour
 
     private void Start()
     {
-        Fill.CurrentGrid = this;
+        Fill = new Fill(this);
     }
 
     public float CellSize
