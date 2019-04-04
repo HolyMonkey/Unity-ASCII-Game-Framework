@@ -7,6 +7,16 @@ using TMPro;
 public class Cell : MonoBehaviour
 {
     [SerializeField] private TextMeshPro Symbol;
+    [SerializeField] private Color _backgroundColor;
+
+    public Color BackgroundColor
+    {
+        get => _backgroundColor;
+        set
+        {
+            _backgroundColor = value;
+        }
+    }
 
     public string Text
     {
