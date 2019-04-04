@@ -14,14 +14,9 @@ public class Grid : MonoBehaviour
     private Vector2 _cellScale;
     private Cell [,] _grid;
 
-    [SerializeField] private Canvas _mainCanvas;
-    [SerializeField] private GameObject _cellPref;
-
     private void Start()
     {
-        Fill.CellSize = _cellSize;
-        Fill.Parent = _mainCanvas.transform;
-        Fill.CellPrefab = _cellPref;
+        Fill.CurrentGrid = this;
     }
 
     public float CellSize
@@ -32,7 +27,6 @@ public class Grid : MonoBehaviour
     public void SetCellSize(float cellSize)
     {
         _cellSize = new Vector2(cellSize,cellSize);
-        Fill.CellSize = _cellSize;
     }
 
     public void Reset(int x, int y)
