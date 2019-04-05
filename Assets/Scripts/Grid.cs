@@ -82,8 +82,8 @@ public class Grid : MonoBehaviour
 
     private void CursorMoveNext()
     {
-        int NewY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y + 1 : _currentSymbolPosition.y;
-        int NewX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? 0 : _currentSymbolPosition.x + 1;
-        _currentSymbolPosition.Set(NewX, NewY);
+        int newY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y + 1 : _currentSymbolPosition.y;
+        int newX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? 0 : _currentSymbolPosition.x + 1;
+        _currentSymbolPosition.Set(newX, newY);
     }
 }
