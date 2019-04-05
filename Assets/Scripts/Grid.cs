@@ -64,7 +64,7 @@ public class Grid : MonoBehaviour
 
     public void Write(char symbol, Color? color = null)
     {
-        if (_currentSymbolPosition.y == _grid.GetLength(0) - 1 && _currentSymbolPosition.x == _grid.GetLength(1) - 1)
+        if (_currentSymbolPosition.y == _grid.GetLength(0))
             return;
 
         _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Text = symbol.ToString();
@@ -82,7 +82,7 @@ public class Grid : MonoBehaviour
 
     private void CursorMoveNext()
     {
-        int NewY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y : _currentSymbolPosition.y + 1;
+        int NewY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y + 1 : _currentSymbolPosition.y;
         int NewX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? 0 : _currentSymbolPosition.x + 1;
         _currentSymbolPosition.Set(NewX, NewY);
     }
