@@ -83,8 +83,8 @@ public class Grid : MonoBehaviour
 
     private void UpdateSymbolCoords()
     {
-        int NewY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y: ++_currentSymbolPosition.y;
-        int NewX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? 0 : ++_currentSymbolPosition.x;
+        int NewY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y : _currentSymbolPosition.y + 1;
+        int NewX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? 0 : _currentSymbolPosition.x + 1;
         _currentSymbolPosition.Set(NewX, NewY);
     }
 }
