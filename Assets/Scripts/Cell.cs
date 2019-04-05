@@ -2,21 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 
 public class Cell : MonoBehaviour
 {
-    [SerializeField] private TextMeshPro Symbol;
+    [SerializeField] private TextMeshPro _symbol;
+    [SerializeField] private Image _panel;
+
+    public Color BackgroundColor
+    {
+        get => _panel.color;
+        set
+        {
+            _panel.color = value;
+        }
+    }
 
     public string Text
     {
         get
         {
-            return Symbol.text;
+            return _symbol.text;
         } 
         set
         {
-            Symbol.text = value;
+            _symbol.text = value;
         }
     }
 
@@ -24,11 +35,11 @@ public class Cell : MonoBehaviour
     {
         get
         {
-            return Symbol.color;
+            return _symbol.color;
         }
         set
         {
-            Symbol.color = value;
+            _symbol.color = value;
         }
     }
 }
