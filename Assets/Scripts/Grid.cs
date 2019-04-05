@@ -12,6 +12,8 @@ public class Grid : MonoBehaviour
     private Vector2 _cellSize = new Vector2(1,1);
     private Vector2 _cellScale;
     private Cell [,] _grid;
+    private char _currentSymbol = char.MinValue;
+    private Vector2Int _currentSymbolPosition = Vector2Int.zero;
 
     public float CellSize
     {
@@ -45,6 +47,8 @@ public class Grid : MonoBehaviour
                 _grid[col, row].transform.parent = gameObject.transform;
             }
         }
+
+        _currentSymbolPosition = Vector2Int.zero;
     }
 
     public void Write(int x, int y, char symbol, Color? color = null)
@@ -53,11 +57,28 @@ public class Grid : MonoBehaviour
         _grid[x,y].Color = color ?? Color.white;
     }
 
+    public void Write(Color? color = null)
+    {
+        if(_currentSymbolPosition.y < _grid.GetLength(0) && _currentSymbol != char.MinValue)
+        {
+            _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Text = _currentSymbol.ToString();
+            _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Color = color ?? Color.white;
+            UpdateSymbolCoords();
+        }
+    }
+
     public bool HasSymbol(int x, int y, char symbol)
     {
         if (_grid[x, y].Text == symbol.ToString())
             return true;
         else
             return false;
+    }
+
+    private void UpdateSymbolCoords()
+    {
+        int NewY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y: ++_currentSymbolPosition.y;
+        int NewX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? 0 : ++_currentSymbolPosition.x;
+        _currentSymbolPosition.Set(NewX, NewY);
     }
 }
