@@ -64,12 +64,12 @@ public class Grid : MonoBehaviour
 
     public void Write(char symbol, Color? color = null)
     {
-        if(_currentSymbolPosition.y < _grid.GetLength(0))
-        {
-            _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Text = symbol.ToString();
-            _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Color = color ?? Color.white;
-            CursorMoveNext();
-        }
+        if (_currentSymbolPosition.y == _grid.GetLength(0) - 1 && _currentSymbolPosition.x == _grid.GetLength(1) - 1)
+            return;
+
+        _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Text = symbol.ToString();
+        _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Color = color ?? Color.white;
+        CursorMoveNext();
     }
 
     public bool HasSymbol(int x, int y, char symbol)
