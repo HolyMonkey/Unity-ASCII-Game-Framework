@@ -8,14 +8,14 @@ using UnityEngine.UI;
 public class Cell : MonoBehaviour
 {
     [SerializeField] private TextMeshPro _symbol;
-    [SerializeField] private Image _panel;
+    [SerializeField] private SpriteRenderer _background;
 
     public Color BackgroundColor
     {
-        get => _panel.color;
+        get => _background.color;
         set
         {
-            _panel.color = value;
+            _background.color = value;
         }
     }
 
