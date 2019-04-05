@@ -12,7 +12,6 @@ public class Grid : MonoBehaviour
     private Vector2 _cellSize = new Vector2(1,1);
     private Vector2 _cellScale;
     private Cell [,] _grid;
-    private char _currentSymbol = char.MinValue;
     private Vector2Int _currentSymbolPosition = Vector2Int.zero;
 
     public float CellSize
@@ -57,13 +56,13 @@ public class Grid : MonoBehaviour
         _grid[x,y].Color = color ?? Color.white;
     }
 
-    public void Write(Color? color = null)
+    public void Write(char symbol, Color? color = null)
     {
-        if(_currentSymbolPosition.y < _grid.GetLength(0) && _currentSymbol != char.MinValue)
+        if(_currentSymbolPosition.y < _grid.GetLength(0))
         {
-            _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Text = _currentSymbol.ToString();
+            _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Text = symbol.ToString();
             _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Color = color ?? Color.white;
-            UpdateSymbolCoords();
+            CursorMoveNext();
         }
     }
 
@@ -75,7 +74,7 @@ public class Grid : MonoBehaviour
             return false;
     }
 
-    private void UpdateSymbolCoords()
+    private void CursorMoveNext()
     {
         int NewY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y : _currentSymbolPosition.y + 1;
         int NewX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? 0 : _currentSymbolPosition.x + 1;
