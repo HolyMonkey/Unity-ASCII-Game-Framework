@@ -13,6 +13,7 @@ public class Grid : MonoBehaviour
     private Vector2 _cellSize = new Vector2(1,1);
     private Vector2 _cellScale;
     private Cell [,] _grid;
+    private Vector2Int _currentSymbolPosition = Vector2Int.zero;
 
     private void Awake()
     {
@@ -51,6 +52,8 @@ public class Grid : MonoBehaviour
                 _grid[col, row].transform.parent = gameObject.transform;
             }
         }
+
+        _currentSymbolPosition = Vector2Int.zero;
     }
 
     public void Write(int x, int y, char symbol, Color? color = null)
@@ -59,11 +62,28 @@ public class Grid : MonoBehaviour
         _grid[x,y].Color = color ?? Color.white;
     }
 
+    public void Write(char symbol, Color? color = null)
+    {
+        if (_currentSymbolPosition.y == _grid.GetLength(0))
+            return;
+
+        _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Text = symbol.ToString();
+        _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Color = color ?? Color.white;
+        CursorMoveNext();
+    }
+
     public bool HasSymbol(int x, int y, char symbol)
     {
         if (_grid[x, y].Text == symbol.ToString())
             return true;
         else
             return false;
+    }
+
+    private void CursorMoveNext()
+    {
+        int newY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y + 1 : _currentSymbolPosition.y;
+        int newX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? 0 : _currentSymbolPosition.x + 1;
+        _currentSymbolPosition.Set(newX, newY);
     }
 }
