@@ -79,6 +79,17 @@ public class Grid : MonoBehaviour
         CursorMoveNext();       
     }
 
+    public void Clear()
+    {
+        for (int i = 0; i < _grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < _grid.GetLength(1); j++)
+            {
+                _grid[i, j].Text = null;
+            }
+        }
+    }
+
     public void WriteLine(string message, Color? color = null)
     {
         for (int i = 0; i < message.Length; i++)

@@ -19,17 +19,7 @@ public class PacmanGame : MonoBehaviour
     private Pacman _pacman;
 
     private int _maxPoints;
-    private int _currentPoints
-    {
-        get => _currentPoints;
-        set
-        {
-            _currentPoints = value;
-            _pointsVisual.text = _currentPoints.ToString();
-            if (_currentPoints >= _maxPoints)
-                GameEnd(true);
-        }
-    }
+    private int _currentPoints = 0;
 
     private char _food = '·';
     private char _wall = '#';
@@ -51,8 +41,6 @@ public class PacmanGame : MonoBehaviour
         {
             if (symbol == ' ')
                 return _food;
-            else if(symbol == 'X')
-                return ' ';
             else
                 return symbol;
         };
@@ -71,8 +59,8 @@ public class PacmanGame : MonoBehaviour
         {            
             if(WasFoodThere(_pacman.X, _pacman.Y))
             {
-                _currentPoints++;
-                _level.Replace(_pacman.X, _pacman.Y, 'X');
+                AddPoint();
+                _level.Replace(_pacman.X, _pacman.Y, char.MinValue);
             }
             _grid.Write(_pacman.X, _pacman.Y, _level.GetSymbol(_pacman.X, _pacman.Y));
             _pacman.Move();
@@ -80,22 +68,34 @@ public class PacmanGame : MonoBehaviour
         }
 
         if (Input.GetKeyUp(_upButton))
-            _pacman.TurnUp();
+            Turn(_upButton);
         else if (Input.GetKeyUp(_downButton))
-            _pacman.TurnDown();
+            Turn(_downButton);
         else if (Input.GetKeyUp(_leftButton))
-            _pacman.TurnLeft();
+            Turn(_leftButton);
         else if (Input.GetKeyUp(_rightButton))
-            _pacman.TurnRight();
+            Turn(_rightButton);
 
         if (IsWallThere(_pacman.X + _pacman.XDir, _pacman.Y + _pacman.YDir))
             SmartTurn();
 
     }
 
+    private void Turn(KeyCode pressedKey)
+    {
+        if (pressedKey == _upButton)
+            _pacman.TurnUp();
+        else if (pressedKey == _downButton)
+            _pacman.TurnDown();
+        else if (pressedKey == _leftButton)
+            _pacman.TurnLeft();
+        else if (pressedKey == _rightButton)
+            _pacman.TurnRight();
+    }
+
     private void GameEnd(bool win)
     {
-        _grid.Reset(_gridLength, _gridHeight);
+        _grid.Clear();
         _grid.WriteLine(win ? "U have won!" : "unfortunately, U have lose");
         enabled = false;
     }
@@ -178,5 +178,13 @@ public class PacmanGame : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private void AddPoint()
+    {
+        _currentPoints++;
+        _pointsVisual.text = _currentPoints + " points";
+        if (_currentPoints >= _maxPoints)
+            GameEnd(true);
     }
 }
