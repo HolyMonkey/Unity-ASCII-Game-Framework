@@ -648,7 +648,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Camera: {fileID: 519420030}
-  CellObject: {fileID: 6078901833394440559, guid: 7107664cc2cd5cf4e8ae8f9c3b09336e,
+  CellTemplate: {fileID: 3934849247500941005, guid: 7107664cc2cd5cf4e8ae8f9c3b09336e,
     type: 3}
 --- !u!224 &2034836056 stripped
 RectTransform:
