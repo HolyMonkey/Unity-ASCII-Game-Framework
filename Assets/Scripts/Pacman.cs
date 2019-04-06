@@ -7,8 +7,8 @@ class Pacman
     public int X { get; private set; }
     public int Y { get; private set; }
 
-    private int _xDir;
-    private int _yDir;
+    public int XDir { get; private set; }
+    public int YDir { get; private set; }
 
     private char[] _openedVerticalStates = { '˅', '˄' };
     private char[] _openedHorizontalStates = { '>', '<' };
@@ -20,53 +20,53 @@ class Pacman
     {
         X = x;
         Y = y;
-        _xDir = xDir;
-        _yDir = yDir;
+        XDir = xDir;
+        YDir = yDir;
     }
 
     public void Move()
     {
-        X += _xDir;
-        Y += _yDir;
+        X += XDir;
+        Y += YDir;
         Animation();
     }
 
     public void TurnLeft()
     {
-        _xDir = -1;
-        _yDir = 0;
+        XDir = -1;
+        YDir = 0;
     }
 
     public void TurnRight()
     {
-        _xDir = 1;
-        _yDir = 0;
+        XDir = 1;
+        YDir = 0;
     }
 
     public void TurnUp()
     {
-        _xDir = 0;
-        _yDir = -1;
+        XDir = 0;
+        YDir = -1;
     }
 
     public void TurnDown()
     {
-        _xDir = 0;
-        _yDir = 1;
+        XDir = 0;
+        YDir = 1;
     }
 
     public char GetCurrentState()
     {
         if(_lastStateWasClosed)
         {
-            if (_yDir != 0)
-                return _openedVerticalStates[_yDir < 0 ? 0 : 1];
+            if (YDir != 0)
+                return _openedVerticalStates[YDir < 0 ? 0 : 1];
             else
-                return _openedHorizontalStates[_xDir < 0 ? 0 : 1];
+                return _openedHorizontalStates[XDir < 0 ? 0 : 1];
         }
         else
         {
-            if (_yDir != 0)
+            if (YDir != 0)
                 return _verticalAnimClosed;
             else
                 return _horizontalAnimClosed;

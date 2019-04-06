@@ -22,6 +22,11 @@ class Level
                 _grid.Write(j, i, GenerationRule(_level[i, j]));
     }
 
+    public char GetSymbol(int x, int y)
+    {
+        return GenerationRule(_level[y, x]);
+    }
+
     private char[,] GetFromFile(string[] file)
     {
         char[,] result = new char[file.Length, file[0].Length];
