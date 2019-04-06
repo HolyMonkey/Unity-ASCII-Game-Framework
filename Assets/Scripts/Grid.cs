@@ -66,10 +66,24 @@ public class Grid : MonoBehaviour
     {
         if (_currentSymbolPosition.y == _grid.GetLength(0))
             return;
+        else if(symbol == '\n')
+        {
+            CursorMoveNext(true);
+            return;
+        }
 
         _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Text = symbol.ToString();
         _grid[_currentSymbolPosition.x, _currentSymbolPosition.y].Color = color ?? Color.white;
-        CursorMoveNext();
+        CursorMoveNext();       
+    }
+
+    public void WriteLine(string message, Color? color = null)
+    {
+        for (int i = 0; i < message.Length; i++)
+        {
+            Write(message[i], color);
+        }
+        CursorMoveNext(true);
     }
 
     public bool HasSymbol(int x, int y, char symbol)
@@ -80,10 +94,10 @@ public class Grid : MonoBehaviour
             return false;
     }
 
-    private void CursorMoveNext()
+    private void CursorMoveNext(bool NewLine = false)
     {
-        int newY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? _currentSymbolPosition.y + 1 : _currentSymbolPosition.y;
-        int newX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 ? 0 : _currentSymbolPosition.x + 1;
+        int newY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 || NewLine ? _currentSymbolPosition.y + 1 : _currentSymbolPosition.y;
+        int newX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 || NewLine ? 0 : _currentSymbolPosition.x + 1;
         _currentSymbolPosition.Set(newX, newY);
     }
 }
