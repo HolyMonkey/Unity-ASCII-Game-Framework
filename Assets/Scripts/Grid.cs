@@ -65,8 +65,10 @@ public class Grid : MonoBehaviour
     public void Write(char symbol, Color? color = null)
     {
         if (_currentSymbolPosition.y == _grid.GetLength(0))
+        {
             return;
-        else if(symbol == '\n')
+        }
+        else if (symbol == '\n')
         {
             CursorMoveNext(true);
             return;
