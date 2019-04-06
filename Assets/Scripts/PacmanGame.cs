@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using TMPro;
 
 public class PacmanGame : MonoBehaviour
 {
     [SerializeField] private Grid _grid;
     [SerializeField] private float _breakDuration;
+    [SerializeField] private TMP_Text _pointsVisual;
 
     private KeyCode _upButton = KeyCode.W;
     private KeyCode _downButton = KeyCode.S;
@@ -15,6 +17,19 @@ public class PacmanGame : MonoBehaviour
 
     private Level _level;
     private Pacman _pacman;
+
+    private int _maxPoints;
+    private int _currentPoints
+    {
+        get => _currentPoints;
+        set
+        {
+            _currentPoints = value;
+            _pointsVisual.text = _currentPoints.ToString();
+            if (_currentPoints >= _maxPoints)
+                GameEnd(true);
+        }
+    }
 
     private char _food = '·';
     private char _wall = '#';
@@ -36,10 +51,14 @@ public class PacmanGame : MonoBehaviour
         {
             if (symbol == ' ')
                 return _food;
+            else if(symbol == 'X')
+                return ' ';
             else
                 return symbol;
         };
-        _level.Reset();
+        _level.Draw();
+
+        _maxPoints = CalculatePoints();
 
         _pacman = new Pacman(1, 1, 1, 0);
         _grid.Write(_pacman.X, _pacman.Y, _pacman.GetCurrentState(), Color.yellow);
@@ -49,10 +68,13 @@ public class PacmanGame : MonoBehaviour
     private void Update()
     {
         if(CalculateTime())
-        {
+        {            
+            if(WasFoodThere(_pacman.X, _pacman.Y))
+            {
+                _currentPoints++;
+                _level.Replace(_pacman.X, _pacman.Y, 'X');
+            }
             _grid.Write(_pacman.X, _pacman.Y, _level.GetSymbol(_pacman.X, _pacman.Y));
-            if (IsWallThere(_pacman.X + _pacman.XDir, _pacman.Y + _pacman.YDir))
-                SmartTurn();
             _pacman.Move();
             _grid.Write(_pacman.X, _pacman.Y, _pacman.GetCurrentState(), Color.yellow);
         }
@@ -66,6 +88,34 @@ public class PacmanGame : MonoBehaviour
         else if (Input.GetKeyUp(_rightButton))
             _pacman.TurnRight();
 
+        if (IsWallThere(_pacman.X + _pacman.XDir, _pacman.Y + _pacman.YDir))
+            SmartTurn();
+
+    }
+
+    private void GameEnd(bool win)
+    {
+        _grid.Reset(_gridLength, _gridHeight);
+        _grid.WriteLine(win ? "U have won!" : "unfortunately, U have lose");
+        enabled = false;
+    }
+
+    private bool WasFoodThere(int x, int y)
+    {
+        return _level.GetSymbol(x, y) == _food;
+    }
+
+    private int CalculatePoints()
+    {
+        int res = 0;
+        for (int i = 0; i < _gridLength; i++)
+        {
+            for (int j = 0; j < _gridHeight; j++)
+            {
+                res += _level.GetSymbol(i, j) == _food ? 1 : 0;
+            }
+        }
+        return res;
     }
 
     private void SmartTurn()
