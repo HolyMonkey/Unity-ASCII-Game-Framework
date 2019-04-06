@@ -29,6 +29,8 @@ public class PacmanGame : MonoBehaviour
             else
                 return symbol;
         };
+
+        _level.Reset();
     }
 
     // Update is called once per frame
