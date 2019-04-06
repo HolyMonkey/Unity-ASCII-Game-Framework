@@ -96,7 +96,7 @@ public class PacmanGame : MonoBehaviour
     private void GameEnd(bool win)
     {
         _grid.Clear();
-        _grid.WriteLine(win ? "U have won!" : "unfortunately, U have lose");
+        _grid.WriteLine(win ? "U have won!" : "Unfortunately, U have lose");
         enabled = false;
     }
 
