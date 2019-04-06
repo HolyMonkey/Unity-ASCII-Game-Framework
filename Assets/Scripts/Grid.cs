@@ -94,10 +94,10 @@ public class Grid : MonoBehaviour
             return false;
     }
 
-    private void CursorMoveNext(bool NewLine = false)
+    private void CursorMoveNext(bool newLine = false)
     {
-        int newY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 || NewLine ? _currentSymbolPosition.y + 1 : _currentSymbolPosition.y;
-        int newX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 || NewLine ? 0 : _currentSymbolPosition.x + 1;
+        int newY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 || newLine ? _currentSymbolPosition.y + 1 : _currentSymbolPosition.y;
+        int newX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 || newLine ? 0 : _currentSymbolPosition.x + 1;
         _currentSymbolPosition.Set(newX, newY);
     }
 }
