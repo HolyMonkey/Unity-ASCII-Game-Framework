@@ -8,11 +8,18 @@ public class PacmanGame : MonoBehaviour
     [SerializeField] private Grid _grid;
 
     private Level _level;
+
     private char _food = '·';
+    private float _cellSize = 0.5f;
+    private int _gridLength = 30;
+    private int _gridHeight = 15;
 
     // Start is called before the first frame update
     void Start()
     {
+        _grid.SetCellSize(_cellSize);
+        _grid.Reset(_gridLength, _gridHeight);
+
         string[] map = File.ReadAllLines("Assets/Resources/PacmanLvl.txt");
         _level = new Level(_grid, map);
         _level.GenerationRule += (symbol) =>

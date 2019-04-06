@@ -19,7 +19,7 @@ class Level
     {
         for (int i = 0; i < _level.GetLength(0); i++)
             for (int j = 0; j < _level.GetLength(1); j++)
-                _grid.Write(GenerationRule(_level[i, j]));
+                _grid.Write(j, i, GenerationRule(_level[i, j]));
     }
 
     private char[,] GetFromFile(string[] file)
