@@ -2,57 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 
-class Pacman
+public class Pacman : Creature
 {
-    public int X { get; private set; }
-    public int Y { get; private set; }
-
-    public int XDir { get; private set; }
-    public int YDir { get; private set; }
-
     private char[] _openedVerticalStates = { '˅', '˄' };
     private char[] _openedHorizontalStates = { '>', '<' };
     private char _verticalAnimClosed = 'ǁ';
     private char _horizontalAnimClosed = '=';
     private bool _lastStateWasClosed = true;
 
-    public Pacman(int x, int y, int xDir, int yDir)
+    public Pacman(int x, int y, int xDir, int yDir) : base(x, y, xDir, yDir)
     {
-        X = x;
-        Y = y;
-        XDir = xDir;
-        YDir = yDir;
+
     }
 
-    public void Move()
+    public override void Move()
     {
-        X += XDir;
-        Y += YDir;
+        base.Move();
         Animation();
-    }
-
-    public void TurnLeft()
-    {
-        XDir = -1;
-        YDir = 0;
-    }
-
-    public void TurnRight()
-    {
-        XDir = 1;
-        YDir = 0;
-    }
-
-    public void TurnUp()
-    {
-        XDir = 0;
-        YDir = -1;
-    }
-
-    public void TurnDown()
-    {
-        XDir = 0;
-        YDir = 1;
     }
 
     public char GetCurrentState()

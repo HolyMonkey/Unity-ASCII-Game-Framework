@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 185907239}
-  _breakDuration: 0
+  _breakDuration: 0.18
   _pointsVisual: {fileID: 1024802943}
 --- !u!114 &185907239
 MonoBehaviour:
