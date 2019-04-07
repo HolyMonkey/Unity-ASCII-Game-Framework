@@ -146,7 +146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _grid: {fileID: 185907239}
   _pacmanBreakDuration: 0.18
-  _ghostBreakDuration: 0.13
+  _ghostBreakDuration: 0.15
   _pointsVisual: {fileID: 1024802943}
 --- !u!114 &185907239
 MonoBehaviour:
