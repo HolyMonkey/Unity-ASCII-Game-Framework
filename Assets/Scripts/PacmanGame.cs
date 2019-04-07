@@ -89,6 +89,7 @@ public class PacmanGame : MonoBehaviour
                 _grid.Write(ghost.X, ghost.Y, _level.GetSymbol(ghost.X, ghost.Y));
                 ghost.Move();
                 _grid.Write(ghost.X, ghost.Y, ghost.Skin, Color.blue);
+                GhostTurn(ghost);
             }
         }
 
@@ -108,6 +109,60 @@ public class PacmanGame : MonoBehaviour
         {
             if (IsWallThere(ghost.X + ghost.XDir, ghost.Y + ghost.YDir))
                 SmartTurn(ghost);
+        }
+    }
+
+    private void GhostTurn(Ghost ghost)
+    {
+        if(ghost.YDir != 0)
+        {
+            if(!IsWallThere(ghost.X + 1, ghost.Y) && !IsWallThere(ghost.X - 1, ghost.Y))
+            {
+                switch(Random.Range(0, 3))
+                {
+                    case 0: ghost.TurnRight(); break;
+                    case 1: ghost.TurnLeft(); break;
+                }
+            }
+            else if(!IsWallThere(ghost.X + 1, ghost.Y))
+            {
+                switch (Random.Range(0, 2))
+                {
+                    case 0: ghost.TurnRight(); break;
+                }
+            }
+            else if (!IsWallThere(ghost.X - 1, ghost.Y))
+            {
+                switch (Random.Range(0, 2))
+                {
+                    case 0: ghost.TurnLeft(); break;
+                }
+            }
+        }
+        else
+        {
+            if (!IsWallThere(ghost.X, ghost.Y + 1) && !IsWallThere(ghost.X, ghost.Y - 1))
+            {
+                switch (Random.Range(0, 3))
+                {
+                    case 0: ghost.TurnUp(); break;
+                    case 1: ghost.TurnDown(); break;
+                }
+            }
+            else if (!IsWallThere(ghost.X, ghost.Y + 1))
+            {
+                switch (Random.Range(0, 2))
+                {
+                    case 0: ghost.TurnDown(); break;
+                }
+            }
+            else if (!IsWallThere(ghost.X, ghost.Y - 1))
+            {
+                switch (Random.Range(0, 2))
+                {
+                    case 0: ghost.TurnUp(); break;
+                }
+            }
         }
     }
 
