@@ -130,6 +130,15 @@ public class PacmanGame : MonoBehaviour
         enabled = false;
     }
 
+    private void ClearFormCreatures()
+    {
+        _grid.Write(_pacman.X, _pacman.Y, char.MinValue);
+        foreach (var ghost in _ghosts)
+        {
+            _grid.Write(ghost.X, ghost.Y, char.MinValue);
+        }
+    }
+
     private bool WasFoodThere(int x, int y)
     {
         return _level.GetSymbol(x, y) == _food;
