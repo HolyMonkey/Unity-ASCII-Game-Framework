@@ -7,7 +7,8 @@ using TMPro;
 public class PacmanGame : MonoBehaviour
 {
     [SerializeField] private Grid _grid;
-    [SerializeField] private float _breakDuration;
+    [SerializeField] private float _pacmanBreakDuration;
+    [SerializeField] private float _ghostBreakDuration;
     [SerializeField] private TMP_Text _pointsVisual;
 
     private KeyCode _upButton = KeyCode.W;
@@ -17,6 +18,7 @@ public class PacmanGame : MonoBehaviour
 
     private Level _level;
     private Pacman _pacman;
+    private Ghost[] _ghosts = new Ghost[2];
 
     private int _maxPoints;
     private int _currentPoints = 0;
@@ -27,7 +29,8 @@ public class PacmanGame : MonoBehaviour
     private int _gridLength = 30;
     private int _gridHeight = 15;
 
-    private float _timer = 0f;
+    private float _pacmanTimer = 0f;
+    private float _ghostTimer = 0f;
 
     // Start is called before the first frame update
     private void Start()
@@ -50,12 +53,18 @@ public class PacmanGame : MonoBehaviour
 
         _pacman = new Pacman(1, 1, 1, 0);
         _grid.Write(_pacman.X, _pacman.Y, _pacman.GetCurrentState(), Color.yellow);
+        _ghosts[0] = new Ghost(28, 13, -1, 0);
+        _ghosts[1] = new Ghost(17, 11, -1, 0);
+        foreach (var ghost in _ghosts)
+        {
+            _grid.Write(ghost.X, ghost.Y, ghost.Skin, Color.blue);
+        }
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if(CalculateTime())
+        if(CalculateTime(_pacman))
         {            
             if(WasFoodThere(_pacman.X, _pacman.Y))
             {
@@ -65,6 +74,16 @@ public class PacmanGame : MonoBehaviour
             _grid.Write(_pacman.X, _pacman.Y, _level.GetSymbol(_pacman.X, _pacman.Y));
             _pacman.Move();
             _grid.Write(_pacman.X, _pacman.Y, _pacman.GetCurrentState(), Color.yellow);
+        }
+
+        if (CalculateTime(_ghosts[0]))
+        {
+            foreach (var ghost in _ghosts)
+            {
+                _grid.Write(ghost.X, ghost.Y, _level.GetSymbol(ghost.X, ghost.Y));
+                ghost.Move();
+                _grid.Write(ghost.X, ghost.Y, ghost.Skin, Color.blue);
+            }
         }
 
         if (Input.GetKeyUp(_upButton))
@@ -77,8 +96,13 @@ public class PacmanGame : MonoBehaviour
             Turn(_rightButton);
 
         if (IsWallThere(_pacman.X + _pacman.XDir, _pacman.Y + _pacman.YDir))
-            SmartTurn();
+            SmartTurn(_pacman);
 
+        foreach (var ghost in _ghosts)
+        {
+            if (IsWallThere(ghost.X + ghost.XDir, ghost.Y + ghost.YDir))
+                SmartTurn(ghost);
+        }
     }
 
     private void Turn(KeyCode pressedKey)
@@ -118,47 +142,47 @@ public class PacmanGame : MonoBehaviour
         return res;
     }
 
-    private void SmartTurn()
+    private void SmartTurn(Creature forWhom)
     {
-        if(_pacman.YDir != 0)
+        if(forWhom.YDir != 0)
         {
-            if(!IsWallThere(_pacman.X + 1, _pacman.Y) && !IsWallThere(_pacman.X - 1, _pacman.Y))
+            if(!IsWallThere(forWhom.X + 1, forWhom.Y) && !IsWallThere(forWhom.X - 1, forWhom.Y))
                 switch(Random.Range(0, 2))
                 {
-                    case 0: _pacman.TurnLeft();  break;
-                    case 1: _pacman.TurnRight(); break;
+                    case 0: forWhom.TurnLeft();  break;
+                    case 1: forWhom.TurnRight(); break;
                 }
-            else if(!IsWallThere(_pacman.X + 1, _pacman.Y))
-                _pacman.TurnRight();
-            else if (!IsWallThere(_pacman.X - 1, _pacman.Y))
-                _pacman.TurnLeft();
+            else if(!IsWallThere(forWhom.X + 1, forWhom.Y))
+                forWhom.TurnRight();
+            else if (!IsWallThere(forWhom.X - 1, forWhom.Y))
+                forWhom.TurnLeft();
             else
             {
-                switch(_pacman.YDir)
+                switch(forWhom.YDir)
                 {
-                    case -1: _pacman.TurnDown(); break;
-                    case 1: _pacman.TurnUp(); break;
+                    case -1: forWhom.TurnDown(); break;
+                    case 1: forWhom.TurnUp(); break;
                 }
             }
         }
         else
         {
-            if (!IsWallThere(_pacman.X, _pacman.Y + 1) && !IsWallThere(_pacman.X, _pacman.Y - 1))
+            if (!IsWallThere(forWhom.X, forWhom.Y + 1) && !IsWallThere(forWhom.X, forWhom.Y - 1))
                 switch (Random.Range(0, 2))
                 {
-                    case 0: _pacman.TurnUp(); break;
-                    case 1: _pacman.TurnDown(); break;
+                    case 0: forWhom.TurnUp(); break;
+                    case 1: forWhom.TurnDown(); break;
                 }
-            else if (!IsWallThere(_pacman.X, _pacman.Y + 1))
-                _pacman.TurnDown();
-            else if (!IsWallThere(_pacman.X, _pacman.Y-1))
-                _pacman.TurnUp();
+            else if (!IsWallThere(forWhom.X, forWhom.Y + 1))
+                forWhom.TurnDown();
+            else if (!IsWallThere(forWhom.X, forWhom.Y-1))
+                forWhom.TurnUp();
             else
             {
-                switch (_pacman.XDir)
+                switch (forWhom.XDir)
                 {
-                    case -1: _pacman.TurnRight(); break;
-                    case 1: _pacman.TurnLeft(); break;
+                    case -1: forWhom.TurnRight(); break;
+                    case 1: forWhom.TurnLeft(); break;
                 }
             }
         }
@@ -169,12 +193,23 @@ public class PacmanGame : MonoBehaviour
         return _level.GetSymbol(x, y) == _wall;
     }
 
-    private bool CalculateTime()
+    private bool CalculateTime(Pacman forWhom)
     {
-        _timer += Time.deltaTime;
-        if(_timer >= _breakDuration)
+        _pacmanTimer += Time.deltaTime;
+        if (_pacmanTimer >= _pacmanBreakDuration)
         {
-            _timer = 0;
+            _pacmanTimer = 0;
+            return true;
+        }
+        return false;
+    }
+
+    private bool CalculateTime(Ghost forWhom)
+    {
+        _ghostTimer += Time.deltaTime;
+        if (_ghostTimer >= _ghostBreakDuration)
+        {
+            _ghostTimer = 0;
             return true;
         }
         return false;
