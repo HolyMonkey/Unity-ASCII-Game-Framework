@@ -64,7 +64,13 @@ public class PacmanGame : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if(CalculateTime(_pacman))
+        foreach (var ghost in _ghosts)
+        {
+            if (CheckForPacman(ghost.X, ghost.Y))
+                GameEnd(false);
+        }
+
+        if (CalculateTime(_pacman))
         {            
             if(WasFoodThere(_pacman.X, _pacman.Y))
             {
@@ -186,6 +192,11 @@ public class PacmanGame : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool CheckForPacman(int x, int y)
+    {
+        return _pacman.X == x && _pacman.Y == y;
     }
 
     private bool IsWallThere(int x, int y)
