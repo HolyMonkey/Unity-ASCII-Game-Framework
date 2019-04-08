@@ -24,19 +24,9 @@ public class Pacman : Creature
     public char GetCurrentState()
     {
         if(_lastStateWasClosed)
-        {
-            if (YDir != 0)
-                return _openedVerticalStates[YDir < 0 ? 0 : 1];
-            else
-                return _openedHorizontalStates[XDir < 0 ? 0 : 1];
-        }
+            return YDir != 0 ? _openedVerticalStates[YDir < 0 ? 0 : 1] : _openedHorizontalStates[XDir < 0 ? 0 : 1];           
         else
-        {
-            if (YDir != 0)
-                return _verticalAnimClosed;
-            else
-                return _horizontalAnimClosed;
-        }
+            return YDir != 0 ? _verticalAnimClosed : _horizontalAnimClosed;
     }
 
     private void Animation()
