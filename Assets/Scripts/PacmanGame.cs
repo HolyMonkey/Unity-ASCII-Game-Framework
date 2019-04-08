@@ -70,28 +70,8 @@ public class PacmanGame : MonoBehaviour
                 GameEnd(false);
         }
 
-        if (CalculateTime(_pacman))
-        {            
-            if(WasFoodThere(_pacman.X, _pacman.Y))
-            {
-                AddPoint();
-                _level.Replace(_pacman.X, _pacman.Y, char.MinValue);
-            }
-            _grid.Write(_pacman.X, _pacman.Y, _level.GetSymbol(_pacman.X, _pacman.Y));
-            _pacman.Move();
-            _grid.Write(_pacman.X, _pacman.Y, _pacman.GetCurrentState(), Color.yellow);
-        }
-
-        if (CalculateTime(_ghosts[0]))
-        {
-            foreach (var ghost in _ghosts)
-            {
-                _grid.Write(ghost.X, ghost.Y, _level.GetSymbol(ghost.X, ghost.Y));
-                ghost.Move();
-                _grid.Write(ghost.X, ghost.Y, ghost.Skin, Color.blue);
-                GhostTurn(ghost);
-            }
-        }
+        CalculateTime(_pacman);
+        CalculateTime(_ghosts[0]);
 
         if (Input.GetKeyUp(_upButton))
             Turn(_upButton);
@@ -112,7 +92,30 @@ public class PacmanGame : MonoBehaviour
         }
     }
 
-    private void GhostTurn(Ghost ghost)
+    private void GhostsTurn()
+    {
+        foreach (var ghost in _ghosts)
+        {
+            _grid.Write(ghost.X, ghost.Y, _level.GetSymbol(ghost.X, ghost.Y));
+            ghost.Move();
+            _grid.Write(ghost.X, ghost.Y, ghost.Skin, Color.blue);
+            GhostMove(ghost);
+        }
+    }
+
+    private void PacmanTurn()
+    {
+        if (WasFoodThere(_pacman.X, _pacman.Y))
+        {
+            AddPoint();
+            _level.Replace(_pacman.X, _pacman.Y, char.MinValue);
+        }
+        _grid.Write(_pacman.X, _pacman.Y, _level.GetSymbol(_pacman.X, _pacman.Y));
+        _pacman.Move();
+        _grid.Write(_pacman.X, _pacman.Y, _pacman.GetCurrentState(), Color.yellow);
+    }
+
+    private void GhostMove(Ghost ghost)
     {
         if(ghost.YDir != 0)
         {
@@ -268,26 +271,24 @@ public class PacmanGame : MonoBehaviour
         return _level.GetSymbol(x, y) == _wall;
     }
 
-    private bool CalculateTime(Pacman forWhom)
+    private void CalculateTime(Pacman forWhom)
     {
         _pacmanTimer += Time.deltaTime;
         if (_pacmanTimer >= _pacmanBreakDuration)
         {
             _pacmanTimer = 0;
-            return true;
+            PacmanTurn();
         }
-        return false;
     }
 
-    private bool CalculateTime(Ghost forWhom)
+    private void CalculateTime(Ghost forWhom)
     {
         _ghostTimer += Time.deltaTime;
         if (_ghostTimer >= _ghostBreakDuration)
         {
             _ghostTimer = 0;
-            return true;
+            GhostsTurn();
         }
-        return false;
     }
 
     private void AddPoint()
@@ -297,4 +298,6 @@ public class PacmanGame : MonoBehaviour
         if (_currentPoints >= _maxPoints)
             GameEnd(true);
     }
+
+    
 }

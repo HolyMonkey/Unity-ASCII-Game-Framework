@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 public class Pacman : Creature
 {
-    private char[] _openedVerticalStates = { '˅', '˄' };
-    private char[] _openedHorizontalStates = { '>', '<' };
-    private char _verticalAnimClosed = 'ǁ';
-    private char _horizontalAnimClosed = '=';
+    private char[] _openedVerticalStates = { 'u', 'n' };
+    private char[] _openedHorizontalStates = { ')', '(' };
+    private char _verticalAnimClosed = 'o';
+    private char _horizontalAnimClosed = 'O';
     private bool _lastStateWasClosed = true;
 
     public Pacman(int x, int y, int xDir, int yDir) : base(x, y, xDir, yDir)
