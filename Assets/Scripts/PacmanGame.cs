@@ -64,62 +64,57 @@ public class PacmanGame : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        foreach (var ghost in _ghosts)
-        {
-            if (CheckForPacman(ghost.X, ghost.Y))
-                GameEnd(false);
-        }
-
         CalculateTime(_pacman);
         CalculateTime(_ghosts[0]);
 
         if (Input.GetKeyUp(_upButton))
-            Turn(_upButton);
+            MakeTurn(_upButton);
         else if (Input.GetKeyUp(_downButton))
-            Turn(_downButton);
+            MakeTurn(_downButton);
         else if (Input.GetKeyUp(_leftButton))
-            Turn(_leftButton);
+            MakeTurn(_leftButton);
         else if (Input.GetKeyUp(_rightButton))
-            Turn(_rightButton);
+            MakeTurn(_rightButton);
 
-        if (IsWallThere(_pacman.X + _pacman.XDir, _pacman.Y + _pacman.YDir))
+        if (IsTargetThere(_pacman.X + _pacman.XDir, _pacman.Y + _pacman.YDir, _wall))
             SmartTurn(_pacman);
-
-        foreach (var ghost in _ghosts)
-        {
-            if (IsWallThere(ghost.X + ghost.XDir, ghost.Y + ghost.YDir))
-                SmartTurn(ghost);
-        }
     }
 
     private void GhostsTurn()
     {
         foreach (var ghost in _ghosts)
         {
-            _grid.Write(ghost.X, ghost.Y, _level.GetSymbol(ghost.X, ghost.Y));
-            ghost.Move();
-            _grid.Write(ghost.X, ghost.Y, ghost.Skin, Color.blue);
+            DrawMove(ghost, Color.blue);
             GhostMove(ghost);
+            if (CheckForPacman(ghost.X, ghost.Y))
+                GameEnd(false);
+            if (IsTargetThere(ghost.X + ghost.XDir, ghost.Y + ghost.YDir, _wall))
+                SmartTurn(ghost);
         }
     }
 
     private void PacmanTurn()
     {
-        if (WasFoodThere(_pacman.X, _pacman.Y))
+        if (IsTargetThere(_pacman.X, _pacman.Y, _food))
         {
             AddPoint();
             _level.Replace(_pacman.X, _pacman.Y, char.MinValue);
         }
-        _grid.Write(_pacman.X, _pacman.Y, _level.GetSymbol(_pacman.X, _pacman.Y));
-        _pacman.Move();
-        _grid.Write(_pacman.X, _pacman.Y, _pacman.GetCurrentState(), Color.yellow);
+        DrawMove(_pacman, Color.yellow);
+    }
+
+    private void DrawMove(Creature creature, Color color)
+    {
+        _grid.Write(creature.X, creature.Y, _level.GetSymbol(creature.X, creature.Y));
+        creature.Move();
+        _grid.Write(creature.X, creature.Y, creature is Pacman ? (creature as Pacman).GetCurrentState() : (creature as Ghost).Skin, color);
     }
 
     private void GhostMove(Ghost ghost)
     {
         if(ghost.YDir != 0)
         {
-            if(!IsWallThere(ghost.X + 1, ghost.Y) && !IsWallThere(ghost.X - 1, ghost.Y))
+            if(!IsTargetThere(ghost.X + 1, ghost.Y, _wall) && !IsTargetThere(ghost.X - 1, ghost.Y, _wall))
             {
                 switch(Random.Range(0, 3))
                 {
@@ -127,14 +122,14 @@ public class PacmanGame : MonoBehaviour
                     case 1: ghost.TurnLeft(); break;
                 }
             }
-            else if(!IsWallThere(ghost.X + 1, ghost.Y))
+            else if(!IsTargetThere(ghost.X + 1, ghost.Y, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
                     case 0: ghost.TurnRight(); break;
                 }
             }
-            else if (!IsWallThere(ghost.X - 1, ghost.Y))
+            else if (!IsTargetThere(ghost.X - 1, ghost.Y, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
@@ -144,7 +139,7 @@ public class PacmanGame : MonoBehaviour
         }
         else
         {
-            if (!IsWallThere(ghost.X, ghost.Y + 1) && !IsWallThere(ghost.X, ghost.Y - 1))
+            if (!IsTargetThere(ghost.X, ghost.Y + 1, _wall) && !IsTargetThere(ghost.X, ghost.Y - 1, _wall))
             {
                 switch (Random.Range(0, 3))
                 {
@@ -152,14 +147,14 @@ public class PacmanGame : MonoBehaviour
                     case 1: ghost.TurnDown(); break;
                 }
             }
-            else if (!IsWallThere(ghost.X, ghost.Y + 1))
+            else if (!IsTargetThere(ghost.X, ghost.Y + 1, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
                     case 0: ghost.TurnDown(); break;
                 }
             }
-            else if (!IsWallThere(ghost.X, ghost.Y - 1))
+            else if (!IsTargetThere(ghost.X, ghost.Y - 1, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
@@ -169,7 +164,53 @@ public class PacmanGame : MonoBehaviour
         }
     }
 
-    private void Turn(KeyCode pressedKey)
+    private void SmartTurn(Creature forWhom)
+    {
+        if (forWhom.YDir != 0)
+        {
+            if (!IsTargetThere(forWhom.X + 1, forWhom.Y, _wall) && !IsTargetThere(forWhom.X - 1, forWhom.Y, _wall))
+                switch (Random.Range(0, 2))
+                {
+                    case 0: forWhom.TurnLeft(); break;
+                    case 1: forWhom.TurnRight(); break;
+                }
+            else if (!IsTargetThere(forWhom.X + 1, forWhom.Y, _wall))
+                forWhom.TurnRight();
+            else if (!IsTargetThere(forWhom.X - 1, forWhom.Y, _wall))
+                forWhom.TurnLeft();
+            else
+            {
+                switch (forWhom.YDir)
+                {
+                    case -1: forWhom.TurnDown(); break;
+                    case 1: forWhom.TurnUp(); break;
+                }
+            }
+        }
+        else
+        {
+            if (!IsTargetThere(forWhom.X, forWhom.Y + 1, _wall) && !IsTargetThere(forWhom.X, forWhom.Y - 1, _wall))
+                switch (Random.Range(0, 2))
+                {
+                    case 0: forWhom.TurnUp(); break;
+                    case 1: forWhom.TurnDown(); break;
+                }
+            else if (!IsTargetThere(forWhom.X, forWhom.Y + 1, _wall))
+                forWhom.TurnDown();
+            else if (!IsTargetThere(forWhom.X, forWhom.Y - 1, _wall))
+                forWhom.TurnUp();
+            else
+            {
+                switch (forWhom.XDir)
+                {
+                    case -1: forWhom.TurnRight(); break;
+                    case 1: forWhom.TurnLeft(); break;
+                }
+            }
+        }
+    }
+
+    private void MakeTurn(KeyCode pressedKey)
     {
         if (pressedKey == _upButton)
             _pacman.TurnUp();
@@ -188,20 +229,6 @@ public class PacmanGame : MonoBehaviour
         enabled = false;
     }
 
-    private void ClearFormCreatures()
-    {
-        _grid.Write(_pacman.X, _pacman.Y, char.MinValue);
-        foreach (var ghost in _ghosts)
-        {
-            _grid.Write(ghost.X, ghost.Y, char.MinValue);
-        }
-    }
-
-    private bool WasFoodThere(int x, int y)
-    {
-        return _level.GetSymbol(x, y) == _food;
-    }
-
     private int CalculatePoints()
     {
         int res = 0;
@@ -215,60 +242,14 @@ public class PacmanGame : MonoBehaviour
         return res;
     }
 
-    private void SmartTurn(Creature forWhom)
-    {
-        if(forWhom.YDir != 0)
-        {
-            if(!IsWallThere(forWhom.X + 1, forWhom.Y) && !IsWallThere(forWhom.X - 1, forWhom.Y))
-                switch(Random.Range(0, 2))
-                {
-                    case 0: forWhom.TurnLeft();  break;
-                    case 1: forWhom.TurnRight(); break;
-                }
-            else if(!IsWallThere(forWhom.X + 1, forWhom.Y))
-                forWhom.TurnRight();
-            else if (!IsWallThere(forWhom.X - 1, forWhom.Y))
-                forWhom.TurnLeft();
-            else
-            {
-                switch(forWhom.YDir)
-                {
-                    case -1: forWhom.TurnDown(); break;
-                    case 1: forWhom.TurnUp(); break;
-                }
-            }
-        }
-        else
-        {
-            if (!IsWallThere(forWhom.X, forWhom.Y + 1) && !IsWallThere(forWhom.X, forWhom.Y - 1))
-                switch (Random.Range(0, 2))
-                {
-                    case 0: forWhom.TurnUp(); break;
-                    case 1: forWhom.TurnDown(); break;
-                }
-            else if (!IsWallThere(forWhom.X, forWhom.Y + 1))
-                forWhom.TurnDown();
-            else if (!IsWallThere(forWhom.X, forWhom.Y-1))
-                forWhom.TurnUp();
-            else
-            {
-                switch (forWhom.XDir)
-                {
-                    case -1: forWhom.TurnRight(); break;
-                    case 1: forWhom.TurnLeft(); break;
-                }
-            }
-        }
-    }
-
     private bool CheckForPacman(int x, int y)
     {
         return _pacman.X == x && _pacman.Y == y;
     }
 
-    private bool IsWallThere(int x, int y)
+    private bool IsTargetThere(int x, int y, char target)
     {
-        return _level.GetSymbol(x, y) == _wall;
+        return _level.GetSymbol(x, y) == target;
     }
 
     private void CalculateTime(Pacman forWhom)
@@ -297,7 +278,5 @@ public class PacmanGame : MonoBehaviour
         _pointsVisual.text = _currentPoints + " points";
         if (_currentPoints >= _maxPoints)
             GameEnd(true);
-    }
-
-    
+    }   
 }
