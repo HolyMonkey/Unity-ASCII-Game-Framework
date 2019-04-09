@@ -99,29 +99,19 @@ public class PacmanGame : MonoBehaviour
         CalculateTimeForPacman();
 
         if (Input.GetKeyUp(_upButton))
-        {
-            //PacmanTurn(_upButton);
-            _lastPressedButton = _upButton;
-            OnPacmanMove?.Invoke(_lastPressedButton);
-        }
+            ButtonClick(_upButton);
         else if (Input.GetKeyUp(_downButton))
-        {
-            //PacmanTurn(_downButton);
-            _lastPressedButton = _downButton;
-            OnPacmanMove?.Invoke(_lastPressedButton);
-        }
+            ButtonClick(_downButton);
         else if (Input.GetKeyUp(_leftButton))
-        {
-            //PacmanTurn(_leftButton);
-            _lastPressedButton = _leftButton;
-            OnPacmanMove?.Invoke(_lastPressedButton);
-        }
+            ButtonClick(_leftButton);
         else if (Input.GetKeyUp(_rightButton))
-        {
-            //PacmanTurn(_rightButton);
-            _lastPressedButton = _rightButton;
-            OnPacmanMove?.Invoke(_lastPressedButton);
-        }
+            ButtonClick(_rightButton);
+    }
+
+    private void ButtonClick(KeyCode button)
+    {
+        _lastPressedButton = button;
+        OnPacmanMove?.Invoke(_lastPressedButton);
     }
 
     private void PacmanTurn(KeyCode pressedButton)

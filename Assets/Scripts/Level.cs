@@ -20,7 +20,10 @@ class Level
     {
         for (int i = 0; i < _map.GetLength(0); i++)
             for (int j = 0; j < _map.GetLength(1); j++)
-                _grid.Write(j, i, OnGeneration(_map[i, j]));
+            {
+                if(OnGeneration != null)
+                    _grid.Write(j, i, OnGeneration(_map[i, j]));
+            }
     }
 
     public void Replace(int x, int y, char NewSymbol)
