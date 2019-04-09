@@ -37,6 +37,8 @@ public class PacmanGame : MonoBehaviour
 
     private event UnityAction<KeyCode> OnPacmanMove;
 
+    private bool _isGameOver = false;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -136,11 +138,15 @@ public class PacmanGame : MonoBehaviour
 
     private void DrawCreature(Creature creature)
     {
+        if (_isGameOver)
+            return;
         _grid.Write(creature.Position.x, creature.Position.y, creature.GetSkin(), creature.CurrentColor);
     }
 
     private void EraseSmth(int x, int y)
     {
+        if (_isGameOver)
+            return;
         _grid.Write(x, y, _level.GetSymbol(x, y));
     }
 
@@ -264,11 +270,7 @@ public class PacmanGame : MonoBehaviour
 
     private void GameEnd(bool win)
     {
-        EraseSmth(_pacman.Position.x, _pacman.Position.y);
-        foreach (var ghost in _ghosts)
-        {
-            EraseSmth(ghost.Position.x, ghost.Position.y);
-        }
+        _isGameOver = true;
         _grid.Clear();   
         _grid.WriteLine(win ? "U have won!" : "Unfortunately, U have lose");
         enabled = false;
@@ -316,9 +318,8 @@ public class PacmanGame : MonoBehaviour
                 {
                     OnPacmanMove += (button) => PacmanTurn(button);
                 }
-
-                _pacman.Animation();
                 DrawCreature(_pacman);
+                _pacman.Animation();          
             }  
         }
     }
