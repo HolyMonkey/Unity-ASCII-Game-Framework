@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
+using System;
 
 class Level
 {
-    public delegate char Rule(char symbol);
-    public event Rule GenerationRule;
+    public event Func<char, char> OnGeneration;
 
     private Grid _grid;
     private char[,] _map;
@@ -19,7 +20,7 @@ class Level
     {
         for (int i = 0; i < _map.GetLength(0); i++)
             for (int j = 0; j < _map.GetLength(1); j++)
-                _grid.Write(j, i, GenerationRule(_map[i, j]));
+                _grid.Write(j, i, OnGeneration(_map[i, j]));
     }
 
     public void Replace(int x, int y, char NewSymbol)
@@ -29,7 +30,7 @@ class Level
 
     public char GetSymbol(int x, int y)
     {
-        return GenerationRule(_map[y, x]);
+        return OnGeneration(_map[y, x]);
     }
 
     private char[,] GetFromFile(string[] file)

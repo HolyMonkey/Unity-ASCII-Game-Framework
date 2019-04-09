@@ -40,7 +40,7 @@ public class PacmanGame : MonoBehaviour
 
         string[] map = File.ReadAllLines("Assets/Resources/PacmanLvl.txt");
         _level = new Level(_grid, map);
-        _level.GenerationRule += (symbol) =>
+        _level.OnGeneration += (symbol) =>
         {
             if (symbol == ' ')
                 return _food;
@@ -51,114 +51,114 @@ public class PacmanGame : MonoBehaviour
 
         _maxPoints = CalculatePoints();
 
-        _pacman = new Pacman(1, 1, 1, 0);
-        _grid.Write(_pacman.X, _pacman.Y, _pacman.GetCurrentState(), Color.yellow);
-        _ghosts[0] = new Ghost(28, 13, -1, 0);
-        _ghosts[1] = new Ghost(17, 11, -1, 0);
+        _pacman = new Pacman(1, 1, 1, 0, Color.yellow);
+        _pacman.OnMove += () =>
+        {
+            if (IsTargetThere(_pacman.X, _pacman.Y, _food))
+            {
+                AddPoint();
+                _level.Replace(_pacman.X, _pacman.Y, char.MinValue);
+            }
+            EraseSmth(_pacman.X - _pacman.XDir, _pacman.Y - _pacman.YDir);
+            DrawCreature(_pacman);
+        };
+        _grid.Write(_pacman.X, _pacman.Y, _pacman.GetSkin(), Color.yellow);
+        _ghosts[0] = new Ghost(28, 13, -1, 0, Color.blue);
+        _ghosts[1] = new Ghost(17, 11, -1, 0, Color.blue);
         foreach (var ghost in _ghosts)
         {
-            _grid.Write(ghost.X, ghost.Y, ghost.Skin, Color.blue);
+            ghost.OnMove += () =>
+            {
+                EraseSmth(ghost.X - ghost.XDir, ghost.Y - ghost.YDir);
+                DrawCreature(ghost);
+                RandomTurn(ghost);
+                if (CheckForPacman(ghost.X, ghost.Y))
+                    GameEnd(false);
+                if (IsTargetThere(ghost.X + ghost.XDir, ghost.Y + ghost.YDir, _wall))
+                    SmartTurn(ghost);
+            };
+            _grid.Write(ghost.X, ghost.Y, ghost.GetSkin(), ghost.CurrentColor);
         }
     }
 
     // Update is called once per frame
     private void Update()
     {
-        CalculateTime(_pacman);
-        CalculateTime(_ghosts[0]);
+        CalculateTimeForPacman();
+        CalculateTimeForGhosts();
 
         if (Input.GetKeyUp(_upButton))
-            MakeTurn(_upButton);
+            _pacman.TurnUp();
         else if (Input.GetKeyUp(_downButton))
-            MakeTurn(_downButton);
+            _pacman.TurnDown();
         else if (Input.GetKeyUp(_leftButton))
-            MakeTurn(_leftButton);
+            _pacman.TurnLeft();
         else if (Input.GetKeyUp(_rightButton))
-            MakeTurn(_rightButton);
+            _pacman.TurnRight();
 
         if (IsTargetThere(_pacman.X + _pacman.XDir, _pacman.Y + _pacman.YDir, _wall))
             SmartTurn(_pacman);
     }
 
-    private void GhostsTurn()
+    private void DrawCreature(Creature creature)
     {
-        foreach (var ghost in _ghosts)
-        {
-            DrawMove(ghost, Color.blue);
-            GhostMove(ghost);
-            if (CheckForPacman(ghost.X, ghost.Y))
-                GameEnd(false);
-            if (IsTargetThere(ghost.X + ghost.XDir, ghost.Y + ghost.YDir, _wall))
-                SmartTurn(ghost);
-        }
+        _grid.Write(creature.X, creature.Y, creature.GetSkin(), creature.CurrentColor);
     }
 
-    private void PacmanTurn()
+    private void EraseSmth(int x, int y)
     {
-        if (IsTargetThere(_pacman.X, _pacman.Y, _food))
-        {
-            AddPoint();
-            _level.Replace(_pacman.X, _pacman.Y, char.MinValue);
-        }
-        DrawMove(_pacman, Color.yellow);
+        _grid.Write(x, y, _level.GetSymbol(x, y));
     }
 
-    private void DrawMove(Creature creature, Color color)
+    private void RandomTurn(Creature creature)
     {
-        _grid.Write(creature.X, creature.Y, _level.GetSymbol(creature.X, creature.Y));
-        creature.Move();
-        _grid.Write(creature.X, creature.Y, creature is Pacman ? (creature as Pacman).GetCurrentState() : (creature as Ghost).Skin, color);
-    }
-
-    private void GhostMove(Ghost ghost)
-    {
-        if(ghost.YDir != 0)
+        if(creature.YDir != 0)
         {
-            if(!IsTargetThere(ghost.X + 1, ghost.Y, _wall) && !IsTargetThere(ghost.X - 1, ghost.Y, _wall))
+            if(!IsTargetThere(creature.X + 1, creature.Y, _wall) && !IsTargetThere(creature.X - 1, creature.Y, _wall))
             {
                 switch(Random.Range(0, 3))
                 {
-                    case 0: ghost.TurnRight(); break;
-                    case 1: ghost.TurnLeft(); break;
+                    case 0: creature.TurnRight(); break;
+                    case 1: creature.TurnLeft(); break;
                 }
             }
-            else if(!IsTargetThere(ghost.X + 1, ghost.Y, _wall))
+            else if(!IsTargetThere(creature.X + 1, creature.Y, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
-                    case 0: ghost.TurnRight(); break;
+                    case 0: creature.TurnRight(); break;
                 }
             }
-            else if (!IsTargetThere(ghost.X - 1, ghost.Y, _wall))
+            else if (!IsTargetThere(creature.X - 1, creature.Y, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
-                    case 0: ghost.TurnLeft(); break;
+                    case 0: creature.TurnLeft(); break;
                 }
             }
         }
         else
         {
-            if (!IsTargetThere(ghost.X, ghost.Y + 1, _wall) && !IsTargetThere(ghost.X, ghost.Y - 1, _wall))
+            if (!IsTargetThere(creature.X, creature.Y + 1, _wall) && !IsTargetThere(creature.X, creature.Y - 1, _wall))
             {
                 switch (Random.Range(0, 3))
                 {
-                    case 0: ghost.TurnUp(); break;
-                    case 1: ghost.TurnDown(); break;
+                    case 0: creature.TurnUp(); break;
+                    case 1: creature.TurnDown(); break;
                 }
             }
-            else if (!IsTargetThere(ghost.X, ghost.Y + 1, _wall))
+            else if (!IsTargetThere(creature.X, creature.Y + 1, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
-                    case 0: ghost.TurnDown(); break;
+                    case 0: creature.TurnDown(); break;
                 }
             }
-            else if (!IsTargetThere(ghost.X, ghost.Y - 1, _wall))
+            else if (!IsTargetThere(creature.X, creature.Y - 1, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
-                    case 0: ghost.TurnUp(); break;
+                    case 0: creature.TurnUp(); break;
                 }
             }
         }
@@ -210,18 +210,6 @@ public class PacmanGame : MonoBehaviour
         }
     }
 
-    private void MakeTurn(KeyCode pressedKey)
-    {
-        if (pressedKey == _upButton)
-            _pacman.TurnUp();
-        else if (pressedKey == _downButton)
-            _pacman.TurnDown();
-        else if (pressedKey == _leftButton)
-            _pacman.TurnLeft();
-        else if (pressedKey == _rightButton)
-            _pacman.TurnRight();
-    }
-
     private void GameEnd(bool win)
     {
         _grid.Clear();
@@ -252,23 +240,26 @@ public class PacmanGame : MonoBehaviour
         return _level.GetSymbol(x, y) == target;
     }
 
-    private void CalculateTime(Pacman forWhom)
+    private void CalculateTimeForPacman()
     {
         _pacmanTimer += Time.deltaTime;
         if (_pacmanTimer >= _pacmanBreakDuration)
         {
             _pacmanTimer = 0;
-            PacmanTurn();
+            _pacman.Move();
         }
     }
 
-    private void CalculateTime(Ghost forWhom)
+    private void CalculateTimeForGhosts()
     {
         _ghostTimer += Time.deltaTime;
         if (_ghostTimer >= _ghostBreakDuration)
         {
             _ghostTimer = 0;
-            GhostsTurn();
+            foreach (var ghost in _ghosts)
+            {
+                ghost.Move();
+            }
         }
     }
 

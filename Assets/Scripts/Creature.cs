@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
+using UnityEngine;
 
-public class Creature
+public abstract class Creature
 {
     public int X { get; private set; }
     public int Y { get; private set; }
@@ -10,18 +12,24 @@ public class Creature
     public int XDir { get; private set; }
     public int YDir { get; private set; }
 
-    public Creature(int x, int y, int xDir, int yDir)
+    public Color CurrentColor { get; set; }
+
+    public event Action OnMove;
+
+    public Creature(int x, int y, int xDir, int yDir, Color color)
     {
         X = x;
         Y = y;
         XDir = xDir;
         YDir = yDir;
+        CurrentColor = color;
     }
 
     public virtual void Move()
     {
         X += XDir;
         Y += YDir;
+        OnMove?.Invoke();
     }
 
     public void TurnLeft()
@@ -47,4 +55,6 @@ public class Creature
         XDir = 0;
         YDir = 1;
     }
+
+    public abstract char GetSkin();
 }
