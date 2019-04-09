@@ -30,7 +30,7 @@ public class Pacman : Creature
             return Direction.y != 0 ? _verticalAnimClosed : _horizontalAnimClosed;
     }
 
-    private void Animation()
+    public void Animation()
     {
         _lastStateWasClosed = !_lastStateWasClosed;
     }

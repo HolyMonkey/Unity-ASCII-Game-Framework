@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using System.IO;
 using TMPro;
 
@@ -15,6 +16,8 @@ public class PacmanGame : MonoBehaviour
     private KeyCode _downButton = KeyCode.S;
     private KeyCode _rightButton = KeyCode.D;
     private KeyCode _leftButton = KeyCode.A;
+
+    private KeyCode _lastPressedButton;
 
     private Level _level;
     private Pacman _pacman;
@@ -32,9 +35,13 @@ public class PacmanGame : MonoBehaviour
     private float _pacmanTimer = 0f;
     private float _ghostTimer = 0f;
 
+    private event UnityAction<KeyCode> OnPacmanMove;
+
     // Start is called before the first frame update
     private void Start()
     {
+        _lastPressedButton = _upButton;
+
         _grid.SetCellSize(_cellSize);
         _grid.Reset(_gridLength, _gridHeight);
 
@@ -61,6 +68,8 @@ public class PacmanGame : MonoBehaviour
             }
             EraseSmth(_pacman.Position.x - _pacman.Direction.x, _pacman.Position.y - _pacman.Direction.y);
             DrawCreature(_pacman);
+            if (OnPacmanMove != null)
+                OnPacmanMove -= (button) => PacmanTurn(button);
         };
         _grid.Write(_pacman.Position.x, _pacman.Position.y, _pacman.GetSkin(), Color.yellow);
         _ghosts[0] = new Ghost(28, 13, -1, 0, Color.blue);
@@ -69,9 +78,11 @@ public class PacmanGame : MonoBehaviour
         {
             ghost.OnMove += () =>
             {
+                if (CheckForPacman(ghost.Position.x, ghost.Position.y))
+                    GameEnd(false);
                 EraseSmth(ghost.Position.x - ghost.Direction.x, ghost.Position.y - ghost.Direction.y);
                 DrawCreature(ghost);
-                RandomTurn(ghost);
+                PossibleTurn(ghost);
                 if (IsTargetThere(ghost.Position.x + ghost.Direction.x, ghost.Position.y + ghost.Direction.y, _wall))
                     SmartTurn(ghost);
             };
@@ -86,16 +97,41 @@ public class PacmanGame : MonoBehaviour
         CalculateTimeForPacman();
 
         if (Input.GetKeyUp(_upButton))
-            _pacman.TurnUp();
+        {
+            //PacmanTurn(_upButton);
+            _lastPressedButton = _upButton;
+            OnPacmanMove?.Invoke(_lastPressedButton);
+        }
         else if (Input.GetKeyUp(_downButton))
-            _pacman.TurnDown();
+        {
+            //PacmanTurn(_downButton);
+            _lastPressedButton = _downButton;
+            OnPacmanMove?.Invoke(_lastPressedButton);
+        }
         else if (Input.GetKeyUp(_leftButton))
-            _pacman.TurnLeft();
+        {
+            //PacmanTurn(_leftButton);
+            _lastPressedButton = _leftButton;
+            OnPacmanMove?.Invoke(_lastPressedButton);
+        }
         else if (Input.GetKeyUp(_rightButton))
-            _pacman.TurnRight();
+        {
+            //PacmanTurn(_rightButton);
+            _lastPressedButton = _rightButton;
+            OnPacmanMove?.Invoke(_lastPressedButton);
+        }
+    }
 
-        if (IsTargetThere(_pacman.Position.x + _pacman.Direction.x, _pacman.Position.y + _pacman.Direction.y, _wall))
-            SmartTurn(_pacman);
+    private void PacmanTurn(KeyCode pressedButton)
+    {
+        if (pressedButton == _upButton && !IsTargetThere(_pacman.Position.x, _pacman.Position.y - 1, _wall))
+            _pacman.TurnUp();
+        else if (pressedButton == _downButton && !IsTargetThere(_pacman.Position.x, _pacman.Position.y + 1, _wall))
+            _pacman.TurnDown();
+        else if (pressedButton == _leftButton && !IsTargetThere(_pacman.Position.x - 1, _pacman.Position.y, _wall))
+            _pacman.TurnLeft();
+        else if (pressedButton == _rightButton && !IsTargetThere(_pacman.Position.x + 1, _pacman.Position.y, _wall))
+            _pacman.TurnRight();
     }
 
     private void DrawCreature(Creature creature)
@@ -108,56 +144,74 @@ public class PacmanGame : MonoBehaviour
         _grid.Write(x, y, _level.GetSymbol(x, y));
     }
 
-    private void RandomTurn(Creature creature)
+    private void PossibleTurn(Creature creature, UnityAction action = null)
     {
         if(creature.Direction.y != 0)
         {
             if(!IsTargetThere(creature.Position.x + 1, creature.Position.y, _wall) && !IsTargetThere(creature.Position.x - 1, creature.Position.y, _wall))
             {
-                switch(Random.Range(0, 3))
-                {
-                    case 0: creature.TurnRight(); break;
-                    case 1: creature.TurnLeft(); break;
-                }
+                if (creature is Ghost)
+                    switch (Random.Range(0, 3))
+                    {
+                        case 0: creature.TurnRight(); break;
+                        case 1: creature.TurnLeft(); break;
+                    }
+                else
+                    action?.Invoke();
             }
             else if(!IsTargetThere(creature.Position.x + 1, creature.Position.y, _wall))
             {
-                switch (Random.Range(0, 2))
-                {
-                    case 0: creature.TurnRight(); break;
-                }
+                if (creature is Ghost)
+                    switch (Random.Range(0, 2))
+                    {
+                        case 0: creature.TurnRight(); break;
+                    }
+                else
+                    action?.Invoke();
             }
             else if (!IsTargetThere(creature.Position.x - 1, creature.Position.y, _wall))
             {
-                switch (Random.Range(0, 2))
-                {
-                    case 0: creature.TurnLeft(); break;
-                }
+                if (creature is Ghost)
+                    switch (Random.Range(0, 2))
+                    {
+                        case 0: creature.TurnLeft(); break;
+                    }
+                else
+                    action?.Invoke();
             }
         }
         else
         {
             if (!IsTargetThere(creature.Position.x, creature.Position.y + 1, _wall) && !IsTargetThere(creature.Position.x, creature.Position.y - 1, _wall))
             {
-                switch (Random.Range(0, 3))
-                {
-                    case 0: creature.TurnUp(); break;
-                    case 1: creature.TurnDown(); break;
-                }
+                if(creature is Ghost)
+                    switch (Random.Range(0, 3))
+                    {
+                        case 0: creature.TurnUp(); break;
+                        case 1: creature.TurnDown(); break;
+                    }
+                else
+                    action?.Invoke();
             }
             else if (!IsTargetThere(creature.Position.x, creature.Position.y + 1, _wall))
             {
-                switch (Random.Range(0, 2))
-                {
-                    case 0: creature.TurnDown(); break;
-                }
+                if(creature is Ghost)
+                    switch (Random.Range(0, 2))
+                    {
+                        case 0: creature.TurnDown(); break;
+                    }
+                else
+                    action?.Invoke();
             }
             else if (!IsTargetThere(creature.Position.x, creature.Position.y - 1, _wall))
             {
-                switch (Random.Range(0, 2))
-                {
-                    case 0: creature.TurnUp(); break;
-                }
+                if(creature is Ghost)
+                    switch (Random.Range(0, 2))
+                    {
+                        case 0: creature.TurnUp(); break;
+                    }
+                else
+                    action?.Invoke();
             }
         }
     }
@@ -235,7 +289,6 @@ public class PacmanGame : MonoBehaviour
 
     private bool CheckForPacman(int x, int y)
     {
-        Debug.Log("Pacman: " + _pacman.Position + $"\nGhost: {x}, {y}");
         return _pacman.Position.x == x && _pacman.Position.y == y;
     }
 
@@ -250,7 +303,23 @@ public class PacmanGame : MonoBehaviour
         if (_pacmanTimer >= _pacmanBreakDuration)
         {
             _pacmanTimer = 0;
-            _pacman.Move();
+            PossibleTurn(_pacman, () => PacmanTurn(_lastPressedButton));
+            
+            if (!IsTargetThere(_pacman.Position.x + _pacman.Direction.x, _pacman.Position.y + _pacman.Direction.y, _wall))
+            {
+                PacmanTurn(_lastPressedButton);
+                _pacman.Move();
+            }
+            else
+            {
+                if(OnPacmanMove == null)
+                {
+                    OnPacmanMove += (button) => PacmanTurn(button);
+                }
+
+                _pacman.Animation();
+                DrawCreature(_pacman);
+            }  
         }
     }
 
