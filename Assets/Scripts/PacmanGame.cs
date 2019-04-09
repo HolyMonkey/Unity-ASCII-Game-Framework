@@ -54,38 +54,36 @@ public class PacmanGame : MonoBehaviour
         _pacman = new Pacman(1, 1, 1, 0, Color.yellow);
         _pacman.OnMove += () =>
         {
-            if (IsTargetThere(_pacman.X, _pacman.Y, _food))
+            if (IsTargetThere(_pacman.Position.x, _pacman.Position.y, _food))
             {
                 AddPoint();
-                _level.Replace(_pacman.X, _pacman.Y, char.MinValue);
+                _level.Replace(_pacman.Position.x, _pacman.Position.y, char.MinValue);
             }
-            EraseSmth(_pacman.X - _pacman.XDir, _pacman.Y - _pacman.YDir);
+            EraseSmth(_pacman.Position.x - _pacman.Direction.x, _pacman.Position.y - _pacman.Direction.y);
             DrawCreature(_pacman);
         };
-        _grid.Write(_pacman.X, _pacman.Y, _pacman.GetSkin(), Color.yellow);
+        _grid.Write(_pacman.Position.x, _pacman.Position.y, _pacman.GetSkin(), Color.yellow);
         _ghosts[0] = new Ghost(28, 13, -1, 0, Color.blue);
         _ghosts[1] = new Ghost(17, 11, -1, 0, Color.blue);
         foreach (var ghost in _ghosts)
         {
             ghost.OnMove += () =>
             {
-                EraseSmth(ghost.X - ghost.XDir, ghost.Y - ghost.YDir);
+                EraseSmth(ghost.Position.x - ghost.Direction.x, ghost.Position.y - ghost.Direction.y);
                 DrawCreature(ghost);
                 RandomTurn(ghost);
-                if (CheckForPacman(ghost.X, ghost.Y))
-                    GameEnd(false);
-                if (IsTargetThere(ghost.X + ghost.XDir, ghost.Y + ghost.YDir, _wall))
+                if (IsTargetThere(ghost.Position.x + ghost.Direction.x, ghost.Position.y + ghost.Direction.y, _wall))
                     SmartTurn(ghost);
             };
-            _grid.Write(ghost.X, ghost.Y, ghost.GetSkin(), ghost.CurrentColor);
+            _grid.Write(ghost.Position.x, ghost.Position.y, ghost.GetSkin(), ghost.CurrentColor);
         }
     }
 
     // Update is called once per frame
     private void Update()
     {
-        CalculateTimeForPacman();
         CalculateTimeForGhosts();
+        CalculateTimeForPacman();
 
         if (Input.GetKeyUp(_upButton))
             _pacman.TurnUp();
@@ -96,13 +94,13 @@ public class PacmanGame : MonoBehaviour
         else if (Input.GetKeyUp(_rightButton))
             _pacman.TurnRight();
 
-        if (IsTargetThere(_pacman.X + _pacman.XDir, _pacman.Y + _pacman.YDir, _wall))
+        if (IsTargetThere(_pacman.Position.x + _pacman.Direction.x, _pacman.Position.y + _pacman.Direction.y, _wall))
             SmartTurn(_pacman);
     }
 
     private void DrawCreature(Creature creature)
     {
-        _grid.Write(creature.X, creature.Y, creature.GetSkin(), creature.CurrentColor);
+        _grid.Write(creature.Position.x, creature.Position.y, creature.GetSkin(), creature.CurrentColor);
     }
 
     private void EraseSmth(int x, int y)
@@ -112,9 +110,9 @@ public class PacmanGame : MonoBehaviour
 
     private void RandomTurn(Creature creature)
     {
-        if(creature.YDir != 0)
+        if(creature.Direction.y != 0)
         {
-            if(!IsTargetThere(creature.X + 1, creature.Y, _wall) && !IsTargetThere(creature.X - 1, creature.Y, _wall))
+            if(!IsTargetThere(creature.Position.x + 1, creature.Position.y, _wall) && !IsTargetThere(creature.Position.x - 1, creature.Position.y, _wall))
             {
                 switch(Random.Range(0, 3))
                 {
@@ -122,14 +120,14 @@ public class PacmanGame : MonoBehaviour
                     case 1: creature.TurnLeft(); break;
                 }
             }
-            else if(!IsTargetThere(creature.X + 1, creature.Y, _wall))
+            else if(!IsTargetThere(creature.Position.x + 1, creature.Position.y, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
                     case 0: creature.TurnRight(); break;
                 }
             }
-            else if (!IsTargetThere(creature.X - 1, creature.Y, _wall))
+            else if (!IsTargetThere(creature.Position.x - 1, creature.Position.y, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
@@ -139,7 +137,7 @@ public class PacmanGame : MonoBehaviour
         }
         else
         {
-            if (!IsTargetThere(creature.X, creature.Y + 1, _wall) && !IsTargetThere(creature.X, creature.Y - 1, _wall))
+            if (!IsTargetThere(creature.Position.x, creature.Position.y + 1, _wall) && !IsTargetThere(creature.Position.x, creature.Position.y - 1, _wall))
             {
                 switch (Random.Range(0, 3))
                 {
@@ -147,14 +145,14 @@ public class PacmanGame : MonoBehaviour
                     case 1: creature.TurnDown(); break;
                 }
             }
-            else if (!IsTargetThere(creature.X, creature.Y + 1, _wall))
+            else if (!IsTargetThere(creature.Position.x, creature.Position.y + 1, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
                     case 0: creature.TurnDown(); break;
                 }
             }
-            else if (!IsTargetThere(creature.X, creature.Y - 1, _wall))
+            else if (!IsTargetThere(creature.Position.x, creature.Position.y - 1, _wall))
             {
                 switch (Random.Range(0, 2))
                 {
@@ -166,21 +164,21 @@ public class PacmanGame : MonoBehaviour
 
     private void SmartTurn(Creature forWhom)
     {
-        if (forWhom.YDir != 0)
+        if (forWhom.Direction.y != 0)
         {
-            if (!IsTargetThere(forWhom.X + 1, forWhom.Y, _wall) && !IsTargetThere(forWhom.X - 1, forWhom.Y, _wall))
+            if (!IsTargetThere(forWhom.Position.x + 1, forWhom.Position.y, _wall) && !IsTargetThere(forWhom.Position.x - 1, forWhom.Position.y, _wall))
                 switch (Random.Range(0, 2))
                 {
                     case 0: forWhom.TurnLeft(); break;
                     case 1: forWhom.TurnRight(); break;
                 }
-            else if (!IsTargetThere(forWhom.X + 1, forWhom.Y, _wall))
+            else if (!IsTargetThere(forWhom.Position.x + 1, forWhom.Position.y, _wall))
                 forWhom.TurnRight();
-            else if (!IsTargetThere(forWhom.X - 1, forWhom.Y, _wall))
+            else if (!IsTargetThere(forWhom.Position.x - 1, forWhom.Position.y, _wall))
                 forWhom.TurnLeft();
             else
             {
-                switch (forWhom.YDir)
+                switch (forWhom.Direction.y)
                 {
                     case -1: forWhom.TurnDown(); break;
                     case 1: forWhom.TurnUp(); break;
@@ -189,19 +187,19 @@ public class PacmanGame : MonoBehaviour
         }
         else
         {
-            if (!IsTargetThere(forWhom.X, forWhom.Y + 1, _wall) && !IsTargetThere(forWhom.X, forWhom.Y - 1, _wall))
+            if (!IsTargetThere(forWhom.Position.x, forWhom.Position.y + 1, _wall) && !IsTargetThere(forWhom.Position.x, forWhom.Position.y - 1, _wall))
                 switch (Random.Range(0, 2))
                 {
                     case 0: forWhom.TurnUp(); break;
                     case 1: forWhom.TurnDown(); break;
                 }
-            else if (!IsTargetThere(forWhom.X, forWhom.Y + 1, _wall))
+            else if (!IsTargetThere(forWhom.Position.x, forWhom.Position.y + 1, _wall))
                 forWhom.TurnDown();
-            else if (!IsTargetThere(forWhom.X, forWhom.Y - 1, _wall))
+            else if (!IsTargetThere(forWhom.Position.x, forWhom.Position.y - 1, _wall))
                 forWhom.TurnUp();
             else
             {
-                switch (forWhom.XDir)
+                switch (forWhom.Direction.x)
                 {
                     case -1: forWhom.TurnRight(); break;
                     case 1: forWhom.TurnLeft(); break;
@@ -212,7 +210,12 @@ public class PacmanGame : MonoBehaviour
 
     private void GameEnd(bool win)
     {
-        _grid.Clear();
+        EraseSmth(_pacman.Position.x, _pacman.Position.y);
+        foreach (var ghost in _ghosts)
+        {
+            EraseSmth(ghost.Position.x, ghost.Position.y);
+        }
+        _grid.Clear();   
         _grid.WriteLine(win ? "U have won!" : "Unfortunately, U have lose");
         enabled = false;
     }
@@ -232,7 +235,8 @@ public class PacmanGame : MonoBehaviour
 
     private bool CheckForPacman(int x, int y)
     {
-        return _pacman.X == x && _pacman.Y == y;
+        Debug.Log("Pacman: " + _pacman.Position + $"\nGhost: {x}, {y}");
+        return _pacman.Position.x == x && _pacman.Position.y == y;
     }
 
     private bool IsTargetThere(int x, int y, char target)
@@ -258,6 +262,8 @@ public class PacmanGame : MonoBehaviour
             _ghostTimer = 0;
             foreach (var ghost in _ghosts)
             {
+                if (CheckForPacman(ghost.Position.x, ghost.Position.y))
+                    GameEnd(false);
                 ghost.Move();
             }
         }

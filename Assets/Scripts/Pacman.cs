@@ -25,9 +25,9 @@ public class Pacman : Creature
     public override char GetSkin()
     {
         if(_lastStateWasClosed)
-            return YDir != 0 ? _openedVerticalStates[YDir < 0 ? 0 : 1] : _openedHorizontalStates[XDir < 0 ? 0 : 1];           
+            return Direction.y != 0 ? _openedVerticalStates[Direction.y < 0 ? 0 : 1] : _openedHorizontalStates[Direction.x < 0 ? 0 : 1];           
         else
-            return YDir != 0 ? _verticalAnimClosed : _horizontalAnimClosed;
+            return Direction.y != 0 ? _verticalAnimClosed : _horizontalAnimClosed;
     }
 
     private void Animation()
