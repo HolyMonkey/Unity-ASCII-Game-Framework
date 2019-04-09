@@ -13,7 +13,7 @@ class Level
     public Level(Grid grid, string[] lvl, Func<char, char> generationRule)
     {
         _grid = grid;
-        _map = GetFromFile(lvl);
+        _map = GetFromStringArray(lvl);
         _generationRule = generationRule;
     }
 
@@ -34,7 +34,7 @@ class Level
         return _generationRule(_map[y, x]);
     }
 
-    private char[,] GetFromFile(string[] file)
+    private char[,] GetFromStringArray(string[] file)
     {
         char[,] result = new char[file.Length, file[0].Length];
         for (int i = 0; i < result.GetLength(0); i++)
