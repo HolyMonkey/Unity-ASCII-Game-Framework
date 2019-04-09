@@ -81,11 +81,11 @@ public class Grid : MonoBehaviour
 
     public void Clear()
     {
-        for (int i = 0; i < _grid.GetLength(0); i++)
+        for (int x = 0; x < _grid.GetLength(0); x++)
         {
-            for (int j = 0; j < _grid.GetLength(1); j++)
+            for (int y = 0; y < _grid.GetLength(1); y++)
             {
-                _grid[i, j].Text = null;
+                _grid[x, y].Text = null;
             }
         }
     }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pacman : Creature
+public class Pacman : Moveable
 {
     private char[] _openedVerticalStates = { 'u', 'n' };
     private char[] _openedHorizontalStates = { ')', '(' };
@@ -11,7 +11,7 @@ public class Pacman : Creature
     private char _horizontalAnimClosed = 'O';
     private bool _lastStateWasClosed = true;
 
-    public Pacman(int x, int y, int xDir, int yDir, Color color) : base(x, y, xDir, yDir, color)
+    public Pacman(Vector2Int position, Vector2Int direction, Color color) : base(position, direction, color)
     {
 
     }

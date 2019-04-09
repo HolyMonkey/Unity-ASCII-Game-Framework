@@ -35,7 +35,7 @@ public class PacmanGame : MonoBehaviour
     private float _pacmanTimer = 0f;
     private float _ghostTimer = 0f;
 
-    private event UnityAction<KeyCode> OnPacmanMove;
+    private UnityAction<KeyCode> OnPacmanMove;
 
     private bool _isGameOver = false;
 
@@ -59,7 +59,7 @@ public class PacmanGame : MonoBehaviour
 
         _maxPoints = CalculatePoints();
 
-        _pacman = new Pacman(1, 1, 1, 0, Color.yellow);
+        _pacman = new Pacman(new Vector2Int(1, 1), new Vector2Int(1, 0), Color.yellow);
         _pacman.OnMove += () =>
         {
             if (IsTargetThere(_pacman.Position.x, _pacman.Position.y, _food))
@@ -67,21 +67,21 @@ public class PacmanGame : MonoBehaviour
                 AddPoint();
                 _level.Replace(_pacman.Position.x, _pacman.Position.y, char.MinValue);
             }
-            EraseSmth(_pacman.Position.x - _pacman.Direction.x, _pacman.Position.y - _pacman.Direction.y);
+            EraseSomething(_pacman.Position.x - _pacman.Direction.x, _pacman.Position.y - _pacman.Direction.y);
             DrawCreature(_pacman);
             if (OnPacmanMove != null)
-                OnPacmanMove -= (button) => PacmanTurn(button);
+                OnPacmanMove = null;
         };
         _grid.Write(_pacman.Position.x, _pacman.Position.y, _pacman.GetSkin(), Color.yellow);
-        _ghosts[0] = new Ghost(28, 13, -1, 0, Color.blue);
-        _ghosts[1] = new Ghost(17, 11, -1, 0, Color.blue);
+        _ghosts[0] = new Ghost(new Vector2Int(28, 13), new Vector2Int(-1, 0), Color.blue);
+        _ghosts[1] = new Ghost(new Vector2Int(17, 11), new Vector2Int(-1, 0), Color.blue);
         foreach (var ghost in _ghosts)
         {
             ghost.OnMove += () =>
             {
                 if (CheckForPacman(ghost.Position.x, ghost.Position.y))
                     GameEnd(false);
-                EraseSmth(ghost.Position.x - ghost.Direction.x, ghost.Position.y - ghost.Direction.y);
+                EraseSomething(ghost.Position.x - ghost.Direction.x, ghost.Position.y - ghost.Direction.y);
                 DrawCreature(ghost);
                 PossibleTurn(ghost);
                 if (IsTargetThere(ghost.Position.x + ghost.Direction.x, ghost.Position.y + ghost.Direction.y, _wall))
@@ -91,7 +91,6 @@ public class PacmanGame : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     private void Update()
     {
         CalculateTimeForGhosts();
@@ -125,93 +124,70 @@ public class PacmanGame : MonoBehaviour
             _pacman.TurnRight();
     }
 
-    private void DrawCreature(Creature creature)
+    private void DrawCreature(Moveable creature)
     {
         if (_isGameOver)
             return;
         _grid.Write(creature.Position.x, creature.Position.y, creature.GetSkin(), creature.CurrentColor);
     }
 
-    private void EraseSmth(int x, int y)
+    private void EraseSomething(int x, int y)
     {
         if (_isGameOver)
             return;
         _grid.Write(x, y, _level.GetSymbol(x, y));
     }
 
-    private void PossibleTurn(Creature creature, UnityAction action = null)
+    private void PossibleTurn(Moveable creature, UnityAction action = null)
     {
         if(creature.Direction.y != 0)
         {
             if(!IsTargetThere(creature.Position.x + 1, creature.Position.y, _wall) && !IsTargetThere(creature.Position.x - 1, creature.Position.y, _wall))
             {
-                if (creature is Ghost)
-                    switch (Random.Range(0, 3))
-                    {
-                        case 0: creature.TurnRight(); break;
-                        case 1: creature.TurnLeft(); break;
-                    }
-                else
-                    action?.Invoke();
+                TurnVariant(creature, action, 3, () => creature.TurnRight(), () => creature.TurnLeft());
             }
             else if(!IsTargetThere(creature.Position.x + 1, creature.Position.y, _wall))
             {
-                if (creature is Ghost)
-                    switch (Random.Range(0, 2))
-                    {
-                        case 0: creature.TurnRight(); break;
-                    }
-                else
-                    action?.Invoke();
+                TurnVariant(creature, action, 2, () => creature.TurnRight());
             }
             else if (!IsTargetThere(creature.Position.x - 1, creature.Position.y, _wall))
             {
-                if (creature is Ghost)
-                    switch (Random.Range(0, 2))
-                    {
-                        case 0: creature.TurnLeft(); break;
-                    }
-                else
-                    action?.Invoke();
+                TurnVariant(creature, action, 2, () => creature.TurnLeft());
             }
         }
         else
         {
             if (!IsTargetThere(creature.Position.x, creature.Position.y + 1, _wall) && !IsTargetThere(creature.Position.x, creature.Position.y - 1, _wall))
             {
-                if(creature is Ghost)
-                    switch (Random.Range(0, 3))
-                    {
-                        case 0: creature.TurnUp(); break;
-                        case 1: creature.TurnDown(); break;
-                    }
-                else
-                    action?.Invoke();
+                TurnVariant(creature, action, 3, () => creature.TurnUp(), () => creature.TurnDown());
             }
             else if (!IsTargetThere(creature.Position.x, creature.Position.y + 1, _wall))
             {
-                if(creature is Ghost)
-                    switch (Random.Range(0, 2))
-                    {
-                        case 0: creature.TurnDown(); break;
-                    }
-                else
-                    action?.Invoke();
+                TurnVariant(creature, action, 2, () => creature.TurnDown());
             }
             else if (!IsTargetThere(creature.Position.x, creature.Position.y - 1, _wall))
             {
-                if(creature is Ghost)
-                    switch (Random.Range(0, 2))
-                    {
-                        case 0: creature.TurnUp(); break;
-                    }
-                else
-                    action?.Invoke();
+                TurnVariant(creature, action, 2, () => creature.TurnUp());
             }
         }
     }
 
-    private void SmartTurn(Creature forWhom)
+    private void TurnVariant(Moveable creature, UnityAction action, int maxNumber, params UnityAction[] avaibaleMethods)
+    {
+        if (creature is Ghost)
+            RandomTurn(maxNumber, avaibaleMethods);
+        else
+            action?.Invoke();
+    }
+
+    private void RandomTurn(int maxNumber, params UnityAction[] avaibaleMethods)
+    {
+        int chosenNumber = Random.Range(0, maxNumber);
+        if (chosenNumber < avaibaleMethods.Length)
+            avaibaleMethods[chosenNumber].Invoke();
+    }
+
+    private void SmartTurn(Moveable forWhom)
     {
         if (forWhom.Direction.y != 0)
         {
@@ -267,15 +243,15 @@ public class PacmanGame : MonoBehaviour
 
     private int CalculatePoints()
     {
-        int res = 0;
+        int result = 0;
         for (int i = 0; i < _gridLength; i++)
         {
             for (int j = 0; j < _gridHeight; j++)
             {
-                res += _level.GetSymbol(i, j) == _food ? 1 : 0;
+                result += _level.GetSymbol(i, j) == _food ? 1 : 0;
             }
         }
-        return res;
+        return result;
     }
 
     private bool CheckForPacman(int x, int y)

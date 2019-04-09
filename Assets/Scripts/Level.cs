@@ -24,9 +24,9 @@ class Level
                 _grid.Write(j, i, _generationRule(_map[i, j]));
     }
 
-    public void Replace(int x, int y, char NewSymbol)
+    public void Replace(int x, int y, char newSymbol)
     {
-        _map[y, x] = NewSymbol;
+        _map[y, x] = newSymbol;
     }
 
     public char GetSymbol(int x, int y)
