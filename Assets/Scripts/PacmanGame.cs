@@ -48,14 +48,13 @@ public class PacmanGame : MonoBehaviour
         _grid.Reset(_gridLength, _gridHeight);
 
         string[] map = File.ReadAllLines("Assets/Resources/PacmanLvl.txt");
-        _level = new Level(_grid, map);
-        _level.OnGeneration += (symbol) =>
+        _level = new Level(_grid, map, (symbol) =>
         {
             if (symbol == ' ')
                 return _food;
             else
                 return symbol;
-        };
+        });
         _level.Draw();
 
         _maxPoints = CalculatePoints();

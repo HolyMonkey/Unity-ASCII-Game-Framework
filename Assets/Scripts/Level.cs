@@ -5,25 +5,23 @@ using System;
 
 class Level
 {
-    public event Func<char, char> OnGeneration;
+    private Func<char, char> _generationRule;
 
     private Grid _grid;
     private char[,] _map;
 
-    public Level(Grid grid, string[] lvl)
+    public Level(Grid grid, string[] lvl, Func<char, char> generationRule)
     {
         _grid = grid;
         _map = GetFromFile(lvl);
+        _generationRule = generationRule;
     }
 
     public void Draw()
     {
         for (int i = 0; i < _map.GetLength(0); i++)
             for (int j = 0; j < _map.GetLength(1); j++)
-            {
-                if(OnGeneration != null)
-                    _grid.Write(j, i, OnGeneration(_map[i, j]));
-            }
+                _grid.Write(j, i, _generationRule(_map[i, j]));
     }
 
     public void Replace(int x, int y, char NewSymbol)
@@ -33,7 +31,7 @@ class Level
 
     public char GetSymbol(int x, int y)
     {
-        return OnGeneration(_map[y, x]);
+        return _generationRule(_map[y, x]);
     }
 
     private char[,] GetFromFile(string[] file)
