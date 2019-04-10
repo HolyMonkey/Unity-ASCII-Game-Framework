@@ -39,7 +39,6 @@ public class PacmanGame : MonoBehaviour
 
     private bool _isGameOver = false;
 
-    // Start is called before the first frame update
     private void Start()
     {
         _lastPressedButton = _upButton;
@@ -143,32 +142,20 @@ public class PacmanGame : MonoBehaviour
         if(creature.Direction.y != 0)
         {
             if(!IsTargetThere(creature.Position.x + 1, creature.Position.y, _wall) && !IsTargetThere(creature.Position.x - 1, creature.Position.y, _wall))
-            {
                 TurnVariant(creature, action, 3, () => creature.TurnRight(), () => creature.TurnLeft());
-            }
             else if(!IsTargetThere(creature.Position.x + 1, creature.Position.y, _wall))
-            {
                 TurnVariant(creature, action, 2, () => creature.TurnRight());
-            }
             else if (!IsTargetThere(creature.Position.x - 1, creature.Position.y, _wall))
-            {
                 TurnVariant(creature, action, 2, () => creature.TurnLeft());
-            }
         }
         else
         {
             if (!IsTargetThere(creature.Position.x, creature.Position.y + 1, _wall) && !IsTargetThere(creature.Position.x, creature.Position.y - 1, _wall))
-            {
                 TurnVariant(creature, action, 3, () => creature.TurnUp(), () => creature.TurnDown());
-            }
             else if (!IsTargetThere(creature.Position.x, creature.Position.y + 1, _wall))
-            {
                 TurnVariant(creature, action, 2, () => creature.TurnDown());
-            }
             else if (!IsTargetThere(creature.Position.x, creature.Position.y - 1, _wall))
-            {
                 TurnVariant(creature, action, 2, () => creature.TurnUp());
-            }
         }
     }
 

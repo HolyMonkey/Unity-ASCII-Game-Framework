@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine.Events;
 using System;
 
@@ -13,7 +12,7 @@ class Level
     public Level(Grid grid, string[] lvl, Func<char, char> generationRule)
     {
         _grid = grid;
-        _map = GetFromStringArray(lvl);
+        _map = ConvertToCharArray(lvl);
         _generationRule = generationRule;
     }
 
@@ -34,12 +33,12 @@ class Level
         return _generationRule(_map[y, x]);
     }
 
-    private char[,] GetFromStringArray(string[] file)
+    private char[,] ConvertToCharArray(string[] array)
     {
-        char[,] result = new char[file.Length, file[0].Length];
+        char[,] result = new char[array.Length, array[0].Length];
         for (int i = 0; i < result.GetLength(0); i++)
             for (int j = 0; j < result.GetLength(1); j++)
-                result[i, j] = file[i][j];
+                result[i, j] = array[i][j];
         return result;
     }
 }
