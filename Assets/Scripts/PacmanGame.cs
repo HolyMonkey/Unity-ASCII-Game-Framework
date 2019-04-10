@@ -19,7 +19,7 @@ public class PacmanGame : MonoBehaviour
 
     private KeyCode _lastPressedButton;
 
-    private Level _level;
+    private PacmanLevel _level;
     private Pacman _pacman;
     private Ghost[] _ghosts = new Ghost[2];
 
@@ -47,13 +47,7 @@ public class PacmanGame : MonoBehaviour
         _grid.Reset(_gridLength, _gridHeight);
 
         string[] map = File.ReadAllLines("Assets/Resources/PacmanLvl.txt");
-        _level = new Level(_grid, map, (symbol) =>
-        {
-            if (symbol == ' ')
-                return _food;
-            else
-                return symbol;
-        });
+        _level = new PacmanLevel(_grid, map, _food);
         _level.Draw();
 
         _maxPoints = CalculatePoints();

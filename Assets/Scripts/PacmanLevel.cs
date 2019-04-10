@@ -1,19 +1,18 @@
-﻿
-using UnityEngine.Events;
+﻿using UnityEngine.Events;
 using System;
 
-class Level
+class PacmanLevel
 {
-    private Func<char, char> _generationRule;
-
     private Grid _grid;
     private char[,] _map;
 
-    public Level(Grid grid, string[] lvl, Func<char, char> generationRule)
+    private char _food;
+
+    public PacmanLevel(Grid grid, string[] lvl, char food)
     {
         _grid = grid;
         _map = ConvertToCharArray(lvl);
-        _generationRule = generationRule;
+        _food = food;
     }
 
     public void Draw()
@@ -40,5 +39,12 @@ class Level
             for (int j = 0; j < result.GetLength(1); j++)
                 result[i, j] = array[i][j];
         return result;
+    }
+
+    private char _generationRule(char symbol)
+    {
+        if (symbol == ' ')
+            return _food;
+        return symbol;
     }
 }
