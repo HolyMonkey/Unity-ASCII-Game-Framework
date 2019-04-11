@@ -35,7 +35,7 @@ public class PacmanGame : MonoBehaviour
     private float _pacmanTimer = 0f;
     private float _ghostTimer = 0f;
 
-    private event UnityAction<KeyCode> _onChangeDirection;
+    private event UnityAction<KeyCode> _onButtonClick;
 
     private bool _isGameOver = false;
 
@@ -73,8 +73,8 @@ public class PacmanGame : MonoBehaviour
         }
         EraseSomething(_pacman.Position.x - _pacman.Direction.x, _pacman.Position.y - _pacman.Direction.y);
         DrawCreature(_pacman);
-        if (_onChangeDirection != null)
-            _onChangeDirection -= PacmanTurn;
+        if (_onButtonClick != null)
+            _onButtonClick -= PacmanTurn;
     }
 
     private void OnGhostHandler(Ghost ghost)
@@ -106,7 +106,7 @@ public class PacmanGame : MonoBehaviour
     private void ButtonClick(KeyCode button)
     {
         _lastPressedButton = button;
-        _onChangeDirection?.Invoke(_lastPressedButton);
+        _onButtonClick?.Invoke(_lastPressedButton);
     }
 
     private void PacmanTurn(KeyCode pressedButton)
@@ -264,8 +264,8 @@ public class PacmanGame : MonoBehaviour
             }
             else
             {
-                if(_onChangeDirection == null)
-                    _onChangeDirection += PacmanTurn;
+                if(_onButtonClick == null)
+                    _onButtonClick += PacmanTurn;
 
                 DrawCreature(_pacman);
                 _pacman.Animation();          
