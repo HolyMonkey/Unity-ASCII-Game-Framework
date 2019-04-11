@@ -22,7 +22,7 @@ public abstract class Moveable
 
     public virtual void Move()
     {
-        Position = new Vector2Int(Position.x + Direction.x, Position.y + Direction.y);
+        Position += Direction;
         OnMove?.Invoke();
     }
 
@@ -47,4 +47,12 @@ public abstract class Moveable
     }
 
     public abstract char GetSkin();
+
+    protected bool IsOnMoveEmpty()
+    {
+        if (OnMove == null)
+            return true;
+        else
+            return false;
+    }
 }

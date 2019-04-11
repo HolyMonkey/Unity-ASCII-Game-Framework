@@ -35,7 +35,7 @@ public class PacmanGame : MonoBehaviour
     private float _pacmanTimer = 0f;
     private float _ghostTimer = 0f;
 
-    private UnityAction<KeyCode> OnPacmanMove;
+    private event UnityAction<KeyCode> _onChangeDirection;
 
     private bool _isGameOver = false;
 
@@ -53,35 +53,39 @@ public class PacmanGame : MonoBehaviour
         _maxPoints = CalculatePoints();
 
         _pacman = new Pacman(new Vector2Int(1, 1), new Vector2Int(1, 0), Color.yellow);
-        _pacman.OnMove += () =>
-        {
-            if (IsTargetThere(_pacman.Position.x, _pacman.Position.y, _food))
-            {
-                AddPoint();
-                _level.Replace(_pacman.Position.x, _pacman.Position.y, char.MinValue);
-            }
-            EraseSomething(_pacman.Position.x - _pacman.Direction.x, _pacman.Position.y - _pacman.Direction.y);
-            DrawCreature(_pacman);
-            if (OnPacmanMove != null)
-                OnPacmanMove = null;
-        };
+        _pacman.OnMove += OnPacmanHandler;
         _grid.Write(_pacman.Position.x, _pacman.Position.y, _pacman.GetSkin(), Color.yellow);
         _ghosts[0] = new Ghost(new Vector2Int(28, 13), new Vector2Int(-1, 0), Color.blue);
         _ghosts[1] = new Ghost(new Vector2Int(17, 11), new Vector2Int(-1, 0), Color.blue);
         foreach (var ghost in _ghosts)
         {
-            ghost.OnMove += () =>
-            {
-                if (CheckForPacman(ghost.Position.x, ghost.Position.y))
-                    GameEnd(false);
-                EraseSomething(ghost.Position.x - ghost.Direction.x, ghost.Position.y - ghost.Direction.y);
-                DrawCreature(ghost);
-                PossibleTurn(ghost);
-                if (IsTargetThere(ghost.Position.x + ghost.Direction.x, ghost.Position.y + ghost.Direction.y, _wall))
-                    SmartTurn(ghost);
-            };
+            ghost.OnGhostMove += OnGhostHandler;
             _grid.Write(ghost.Position.x, ghost.Position.y, ghost.GetSkin(), ghost.CurrentColor);
         }
+    }
+
+    private void OnPacmanHandler()
+    {
+        if (IsTargetThere(_pacman.Position.x, _pacman.Position.y, _food))
+        {
+            AddPoint();
+            _level.Replace(_pacman.Position.x, _pacman.Position.y, char.MinValue);
+        }
+        EraseSomething(_pacman.Position.x - _pacman.Direction.x, _pacman.Position.y - _pacman.Direction.y);
+        DrawCreature(_pacman);
+        if (_onChangeDirection != null)
+            _onChangeDirection -= PacmanTurn;
+    }
+
+    private void OnGhostHandler(Ghost ghost)
+    {
+        if (CheckForPacman(ghost.Position.x, ghost.Position.y))
+            GameEnd(false);
+        EraseSomething(ghost.Position.x - ghost.Direction.x, ghost.Position.y - ghost.Direction.y);
+        DrawCreature(ghost);
+        PossibleTurn(ghost);
+        if (IsTargetThere(ghost.Position.x + ghost.Direction.x, ghost.Position.y + ghost.Direction.y, _wall))
+            SmartTurn(ghost);
     }
 
     private void Update()
@@ -102,7 +106,7 @@ public class PacmanGame : MonoBehaviour
     private void ButtonClick(KeyCode button)
     {
         _lastPressedButton = button;
-        OnPacmanMove?.Invoke(_lastPressedButton);
+        _onChangeDirection?.Invoke(_lastPressedButton);
     }
 
     private void PacmanTurn(KeyCode pressedButton)
@@ -260,10 +264,9 @@ public class PacmanGame : MonoBehaviour
             }
             else
             {
-                if(OnPacmanMove == null)
-                {
-                    OnPacmanMove += (button) => PacmanTurn(button);
-                }
+                if(_onChangeDirection == null)
+                    _onChangeDirection += PacmanTurn;
+
                 DrawCreature(_pacman);
                 _pacman.Animation();          
             }  
