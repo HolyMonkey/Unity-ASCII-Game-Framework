@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
-using System.IO;
 using TMPro;
 
 public class PacmanGame : MonoBehaviour
@@ -45,7 +42,9 @@ public class PacmanGame : MonoBehaviour
         _grid.SetCellSize(_cellSize);
         _grid.Reset(_gridLength, _gridHeight);
 
-        string[] map = File.ReadAllLines("Assets/Resources/PacmanLvl.txt");
+        string[] map = Resources.Load<TextAsset>("PacmanLvl").ToString().Split('\n');
+        ChangeMap(ref map);
+
         _level = new PacmanLevel(_grid, map, _food);
         _level.Draw();
 
@@ -57,6 +56,25 @@ public class PacmanGame : MonoBehaviour
         _ghosts[1] = new Ghost(new Vector2Int(17, 11), new Vector2Int(-1, 0), Color.blue);
         foreach (var ghost in _ghosts)
             _grid.Write(ghost.Position.x, ghost.Position.y, ghost.GetSkin(), ghost.CurrentColor);
+    }
+
+    private void ChangeMap(ref string[] map)
+    {
+        string[] newMap = new string[map.Length];
+        for (int i = 0; i < newMap.Length; i++)
+        {
+            newMap[i] = map[i];
+        }
+        for (int i = 0; i < newMap.Length - 1; i++)
+        {
+            string newRow = null;
+            for (int j = 0; j < newMap[i].Length - 1; j++)
+            {
+                newRow += newMap[i][j];
+            }
+            newMap[i] = newRow;
+        }
+        map = newMap;
     }
 
     private void PacmanMove()

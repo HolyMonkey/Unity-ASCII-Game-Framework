@@ -16,9 +16,9 @@ public class Pacman : Moveable
 
     }
 
-    public override void Move()
+    protected override void ChangePosition()
     {
-        base.Move();
+        base.ChangePosition();
         Animation();
     }
 

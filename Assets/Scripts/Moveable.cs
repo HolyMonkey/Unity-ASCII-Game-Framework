@@ -18,7 +18,12 @@ public abstract class Moveable
         CurrentColor = color;
     }
 
-    public virtual void Move()
+    public void Move()
+    {
+        ChangePosition();
+    }
+
+    protected virtual void ChangePosition()
     {
         Position += Direction;
     }
