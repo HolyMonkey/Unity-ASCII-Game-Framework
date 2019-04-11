@@ -35,9 +35,8 @@ public class PacmanGame : MonoBehaviour
     private float _pacmanTimer = 0f;
     private float _ghostTimer = 0f;
 
-    private event UnityAction<KeyCode> _onButtonClick;
-
     private bool _isGameOver = false;
+    private bool _isPacmanStuck = false;
 
     private void Start()
     {
@@ -53,33 +52,29 @@ public class PacmanGame : MonoBehaviour
         _maxPoints = CalculatePoints();
 
         _pacman = new Pacman(new Vector2Int(1, 1), new Vector2Int(1, 0), Color.yellow);
-        _pacman.OnMove += OnPacmanHandler;
         _grid.Write(_pacman.Position.x, _pacman.Position.y, _pacman.GetSkin(), Color.yellow);
         _ghosts[0] = new Ghost(new Vector2Int(28, 13), new Vector2Int(-1, 0), Color.blue);
         _ghosts[1] = new Ghost(new Vector2Int(17, 11), new Vector2Int(-1, 0), Color.blue);
         foreach (var ghost in _ghosts)
-        {
-            ghost.OnGhostMove += OnGhostHandler;
             _grid.Write(ghost.Position.x, ghost.Position.y, ghost.GetSkin(), ghost.CurrentColor);
-        }
     }
 
-    private void OnPacmanHandler()
+    private void PacmanMove()
     {
         if (IsTargetThere(_pacman.Position.x, _pacman.Position.y, _food))
         {
             AddPoint();
             _level.Replace(_pacman.Position.x, _pacman.Position.y, char.MinValue);
         }
+        _pacman.Move();
         EraseSomething(_pacman.Position.x - _pacman.Direction.x, _pacman.Position.y - _pacman.Direction.y);
         DrawCreature(_pacman);
-        if (_onButtonClick != null)
-            _onButtonClick -= PacmanTurn;
     }
 
-    private void OnGhostHandler(Ghost ghost)
+    private void GhostMove(Ghost ghost)
     {
-        if (CheckForPacman(ghost.Position.x, ghost.Position.y))
+        ghost.Move();
+        if (CheckForPacman(ghost.Position.x, ghost.Position.y) || CheckForPacman(ghost.Position.x - ghost.Direction.x, ghost.Position.y - ghost.Direction.y))
             GameEnd(false);
         EraseSomething(ghost.Position.x - ghost.Direction.x, ghost.Position.y - ghost.Direction.y);
         DrawCreature(ghost);
@@ -106,7 +101,11 @@ public class PacmanGame : MonoBehaviour
     private void ButtonClick(KeyCode button)
     {
         _lastPressedButton = button;
-        _onButtonClick?.Invoke(_lastPressedButton);
+        if (_isPacmanStuck)
+        {
+            PacmanTurn(_lastPressedButton);
+            _isPacmanStuck = false;
+        }
     }
 
     private void PacmanTurn(KeyCode pressedButton)
@@ -260,13 +259,11 @@ public class PacmanGame : MonoBehaviour
             if (!IsTargetThere(_pacman.Position.x + _pacman.Direction.x, _pacman.Position.y + _pacman.Direction.y, _wall))
             {
                 PacmanTurn(_lastPressedButton);
-                _pacman.Move();
+                PacmanMove();
             }
             else
             {
-                if(_onButtonClick == null)
-                    _onButtonClick += PacmanTurn;
-
+                _isPacmanStuck = true;
                 DrawCreature(_pacman);
                 _pacman.Animation();          
             }  
@@ -280,11 +277,7 @@ public class PacmanGame : MonoBehaviour
         {
             _ghostTimer = 0;
             foreach (var ghost in _ghosts)
-            {
-                if (CheckForPacman(ghost.Position.x, ghost.Position.y))
-                    GameEnd(false);
-                ghost.Move();
-            }
+                GhostMove(ghost);
         }
     }
 

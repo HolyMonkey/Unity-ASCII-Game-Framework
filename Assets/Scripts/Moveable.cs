@@ -11,8 +11,6 @@ public abstract class Moveable
 
     public Color CurrentColor { get; set; }
 
-    public event Action OnMove;
-
     public Moveable(Vector2Int position, Vector2Int direction, Color color)
     {
         Position = position;
@@ -23,7 +21,6 @@ public abstract class Moveable
     public virtual void Move()
     {
         Position += Direction;
-        OnMove?.Invoke();
     }
 
     public void TurnLeft()
@@ -47,12 +44,4 @@ public abstract class Moveable
     }
 
     public abstract char GetSkin();
-
-    protected bool IsOnMoveEmpty()
-    {
-        if (OnMove == null)
-            return true;
-        else
-            return false;
-    }
 }
