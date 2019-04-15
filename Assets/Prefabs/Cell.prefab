@@ -254,6 +254,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _symbol: {fileID: 8871599330722364271}
   _background: {fileID: 4344309576296328800}
+  Animations: {fileID: 0}
 --- !u!1 &7800024945666820339
 GameObject:
   m_ObjectHideFlags: 0
