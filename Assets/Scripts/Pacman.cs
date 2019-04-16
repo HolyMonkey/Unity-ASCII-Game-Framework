@@ -18,7 +18,7 @@ public class Pacman : Moveable
 
     protected override void ChangePosition()
     {
-        base.ChangePosition();
+        Position += Direction;
         Animation();
     }
 

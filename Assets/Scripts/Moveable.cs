@@ -6,7 +6,7 @@ using UnityEngine;
 
 public abstract class Moveable
 {
-    public Vector2Int Position { get; private set; }
+    public Vector2Int Position { get; protected set; }
     public Vector2Int Direction { get; private set; }
 
     public Color CurrentColor { get; set; }
@@ -23,10 +23,7 @@ public abstract class Moveable
         ChangePosition();
     }
 
-    protected virtual void ChangePosition()
-    {
-        Position += Direction;
-    }
+    protected abstract void ChangePosition();
 
     public void TurnLeft()
     {
