@@ -16,9 +16,8 @@ public class Pacman : Moveable
 
     }
 
-    protected override void ChangePosition()
-    {
-        Position += Direction;
+    protected override void OnMoved()
+    {        
         Animation();
     }
 

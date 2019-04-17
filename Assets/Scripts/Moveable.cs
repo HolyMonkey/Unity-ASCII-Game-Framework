@@ -20,10 +20,14 @@ public abstract class Moveable
 
     public void Move()
     {
-        ChangePosition();
+        Position += Direction;
+        OnMoved();
     }
 
-    protected abstract void ChangePosition();
+    protected virtual void OnMoved()
+    {
+
+    }
 
     public void TurnLeft()
     {

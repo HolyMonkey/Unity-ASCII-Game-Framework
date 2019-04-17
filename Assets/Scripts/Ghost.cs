@@ -13,9 +13,4 @@ public class Ghost : Moveable
     {
 
     }
-
-    protected override void ChangePosition()
-    {
-        Position += Direction;
-    }
 }
