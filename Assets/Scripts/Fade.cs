@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fade : IAnimationProperties
+public class Fade : Animation
 {
     private Cell _cell;
     private Color _color;
@@ -15,7 +15,7 @@ public class Fade : IAnimationProperties
     private float _opacity;
     private float _elapsedTime = 0;
 
-    public Fade(Cell cell, bool fadingIn)
+    public Fade(Cell cell, bool fadingIn) 
     {
         _cell = cell;
 
@@ -29,13 +29,13 @@ public class Fade : IAnimationProperties
         }
     }
 
-    public IAnimationProperties Duration(float seconds)
+    public override Animation Duration(float seconds)
     {
         this._duration = seconds;
         return this;
     }
 
-    public void Start()
+    public override void Start()
     {
         if (_fadeIn == true)
         {
@@ -50,7 +50,7 @@ public class Fade : IAnimationProperties
         }
     }
 
-    public void Update()
+    public override void Update()
     {
         if (_fadeIn == true)
         {
