@@ -8,6 +8,7 @@ public class Grid : MonoBehaviour
     public GridCamera Camera;
     public Cell CellTemplate;
     public Fill Fill;
+    public Animations Animations;
 
     private Vector2 _gridOffset;
     private Vector2 _cellSize = new Vector2(1,1);
@@ -18,6 +19,12 @@ public class Grid : MonoBehaviour
     private void Awake()
     {
         Fill = new Fill(this);
+        Animations = new Animations(this);
+    }
+
+    private void Update()
+    {
+        Animations.Update();
     }
 
     public float CellSize
@@ -101,5 +108,10 @@ public class Grid : MonoBehaviour
         int newY = _currentSymbolPosition.x == _grid.GetLength(1) - 1 || newLine ? _currentSymbolPosition.y + 1 : _currentSymbolPosition.y;
         int newX = _currentSymbolPosition.x == _grid.GetLength(1) - 1 || newLine ? 0 : _currentSymbolPosition.x + 1;
         _currentSymbolPosition.Set(newX, newY);
+    }
+
+    public Cell GetSymbol(int x, int y)
+    {
+        return _grid[x, y];
     }
 }
