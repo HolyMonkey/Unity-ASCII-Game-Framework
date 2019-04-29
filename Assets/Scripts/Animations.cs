@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Animations : IAnimations
-{ 
+public class Animations
+{
     private Grid _grid;
     private Cell _cell;
 
     private Transit _transit;
     private StretchFigure _stretchFigure;
     private Fade _fade;
+
+    private Animation _animations;
 
     public Animations(Grid grid)
     {
@@ -20,40 +22,33 @@ public class Animations : IAnimations
     {
         _cell = cell;
     }
-    
-    public IAnimationProperties Transit(int fromX, int fromY, int toX, int toY)
+
+    public Animation Transit(int fromX, int fromY, int toX, int toY)
     {
-        _transit = new Transit(_grid, new Vector2Int(fromX, fromY), new Vector2Int(toX, toY));
-        return _transit;
+        _animations = new Transit(_grid, new Vector2Int(fromX, fromY), new Vector2Int(toX, toY));
+        return _animations;
     }
 
-    public IAnimationProperties FadeIn()
+    public Animation FadeIn()
     {
-        _fade = new Fade(_cell, true);
-        return _fade;
+        _animations = new Fade(_cell, true);
+        return _animations;
     }
 
-    public IAnimationProperties FadeOut()
+    public Animation FadeOut()
     {
-        _fade = new Fade(_cell, false);
-        return _fade;
+        _animations = new Fade(_cell, false);
+        return _animations;
     }
 
-    public IAnimationProperties StretchFigure()
+    public Animation StretchFigure()
     {
-        _stretchFigure = new StretchFigure(_cell);
-        return _stretchFigure;
+        _animations = new StretchFigure(_cell);
+        return _animations;
     }
 
     public void Update()
     {
-        if (_transit != null)
-            _transit.Update();
-
-        if (_fade != null)
-            _fade.Update();
-
-        if (_stretchFigure != null)
-            _stretchFigure.Update();
+        _animations?.Update();
     }
 }

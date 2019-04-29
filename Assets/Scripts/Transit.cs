@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Transit : IAnimationProperties
+public class Transit : Animation
 {
     private Grid _grid;
 
@@ -28,13 +28,13 @@ public class Transit : IAnimationProperties
         _toPoint = to;
     }
 
-    public IAnimationProperties Duration(float seconds)
+    public override Animation Duration(float seconds)
     {
         this._duration = seconds;
         return this;
     }
 
-    public void Start()
+    public override void Start()
     {
         if (_transiting == true)
         {
@@ -54,7 +54,7 @@ public class Transit : IAnimationProperties
         }
     }
 
-    public void Update()
+    public override void Update()
     {
         if (_transiting == true)
         {
