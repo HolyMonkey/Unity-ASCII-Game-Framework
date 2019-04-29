@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StretchFigure : Animation
+public class StretchFigure : IAnimationProperties
 {
     private Cell _cell;
     private Vector2 _cellScale;
@@ -21,13 +21,13 @@ public class StretchFigure : Animation
         _isStretching = true;
     }
 
-    public override Animation Duration(float seconds)
+    public IAnimationProperties Duration(float seconds)
     {
         this._duration = seconds;
         return this;
     }
 
-    public override void Start()
+    public void Start()
     {
         if (_isStretching == true)
         {
@@ -37,7 +37,7 @@ public class StretchFigure : Animation
     }
 
 
-    public override void Update()
+    public void Update()
     {
         if (_isStretching == true)
         {
