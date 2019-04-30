@@ -9,4 +9,6 @@ public abstract class Animation
     public abstract void Start();
 
     public abstract void Update();
+
+    public bool IsAnimating = false;
 }

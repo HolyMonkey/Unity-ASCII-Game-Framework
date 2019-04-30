@@ -7,11 +7,9 @@ public class Animations
     private Grid _grid;
     private Cell _cell;
 
-    private Transit _transit;
-    private StretchFigure _stretchFigure;
-    private Fade _fade;
-
     private Animation _animations;
+    private static Queue<Animation> _queue = new Queue<Animation>();
+    private static Animation _currentAnimation;
 
     public Animations(Grid grid)
     {
@@ -26,29 +24,48 @@ public class Animations
     public Animation Transit(int fromX, int fromY, int toX, int toY)
     {
         _animations = new Transit(_grid, new Vector2Int(fromX, fromY), new Vector2Int(toX, toY));
+        _queue.Enqueue(_animations);
         return _animations;
     }
 
     public Animation FadeIn()
     {
         _animations = new Fade(_cell, true);
+        _queue.Enqueue(_animations);
         return _animations;
     }
 
     public Animation FadeOut()
     {
         _animations = new Fade(_cell, false);
+        _queue.Enqueue(_animations);
         return _animations;
     }
 
     public Animation StretchFigure()
     {
         _animations = new StretchFigure(_cell);
+        _queue.Enqueue(_animations);
         return _animations;
     }
 
     public void Update()
     {
-        _animations?.Update();
+        if (_queue.Count != 0 && _currentAnimation == null)
+        {
+            _currentAnimation = _queue.Dequeue();
+        }
+
+        if (_currentAnimation != null)
+        {
+            if (_currentAnimation.IsAnimating == true)
+            {
+                _currentAnimation.Update();
+            }
+            else
+            {
+                _currentAnimation = null;
+            }
+        }
     }
 }

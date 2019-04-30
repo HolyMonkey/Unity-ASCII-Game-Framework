@@ -18,6 +18,7 @@ public class Fade : Animation
     public Fade(Cell cell, bool fadingIn)
     {
         _cell = cell;
+        IsAnimating = true;
 
         if (fadingIn == true)
         {
@@ -31,7 +32,7 @@ public class Fade : Animation
 
     public override Animation Duration(float seconds)
     {
-        this._duration = seconds;
+        _duration = seconds;
         return this;
     }
 
@@ -40,12 +41,12 @@ public class Fade : Animation
         if (_fadeIn == true)
         {
             _opacity = 0;
-            _steps = _duration / 10;
+            _steps = _duration / 20;
         }
 
         if (_fadeOut == true)
         {
-            _steps = _duration / 10;
+            _steps = _duration / 20;
             _opacity = 1f;
         }
     }
@@ -63,12 +64,15 @@ public class Fade : Animation
                     _color = _cell.Color;
                     _color.a = _opacity;
                     _cell.Color = _color;
-                    _opacity += 0.1f;
+                    _opacity += 0.05f;
                     _elapsedTime = 0;
                 }
             }
             else
+            {
                 _fadeIn = false;
+                IsAnimating = false;
+            }
         }
 
         if (_fadeOut == true)
@@ -82,12 +86,15 @@ public class Fade : Animation
                     _color = _cell.Color;
                     _color.a = _opacity;
                     _cell.Color = _color;
-                    _opacity -= 0.1f;
+                    _opacity -= 0.05f;
                     _elapsedTime = 0;
                 }
             }
             else
+            {
                 _fadeOut = false;
+                IsAnimating = false;
+            }
         }
     }
 }

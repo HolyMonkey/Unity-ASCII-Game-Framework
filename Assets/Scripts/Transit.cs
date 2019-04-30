@@ -5,8 +5,6 @@ using UnityEngine;
 public class Transit : Animation
 {
     private Grid _grid;
-
-    private bool _transiting = false;
     private Vector2Int _fromPoint, _toPoint;
 
     private int _step;
@@ -23,20 +21,20 @@ public class Transit : Animation
     public Transit(Grid grid, Vector2Int from, Vector2Int to)
     {
         _grid = grid;
-        _transiting = true;
+        IsAnimating = true;
         _fromPoint = from;
         _toPoint = to;
     }
 
     public override Animation Duration(float seconds)
     {
-        this._duration = seconds;
+        _duration = seconds;
         return this;
     }
 
     public override void Start()
     {
-        if (_transiting == true)
+        if (IsAnimating == true)
         {
             _dy = Mathf.Abs(_toPoint.y - _fromPoint.y);
             _dx = Mathf.Abs(_toPoint.x - _fromPoint.x);
@@ -56,7 +54,7 @@ public class Transit : Animation
 
     public override void Update()
     {
-        if (_transiting == true)
+        if (IsAnimating == true)
         {
             if (_x != _toPoint.x || _y != _toPoint.y)
             {
@@ -94,8 +92,9 @@ public class Transit : Animation
                 }
             }
             else
-                _transiting = false;
+            {
+                IsAnimating = false;
+            }
         }
-
     }
 }

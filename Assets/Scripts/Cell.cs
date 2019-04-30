@@ -17,11 +17,6 @@ public class Cell : MonoBehaviour
         Animations = new Animations(this);
     }
 
-    private void Update()
-    {
-        Animations.Update();
-    }
-
     public Color BackgroundColor
     {
         get => _background.color;
