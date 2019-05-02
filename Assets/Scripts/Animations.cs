@@ -7,7 +7,7 @@ public class Animations
     private Grid _grid;
     private Cell _cell;
 
-    private Animation _animations;
+    private Animation _animation;
     private static Queue<Animation> _queue = new Queue<Animation>();
     private static Animation _currentAnimation;
 
@@ -23,30 +23,30 @@ public class Animations
 
     public Animation Transit(int fromX, int fromY, int toX, int toY)
     {
-        _animations = new Transit(_grid, new Vector2Int(fromX, fromY), new Vector2Int(toX, toY));
-        _queue.Enqueue(_animations);
-        return _animations;
+        _animation = new Transit(_grid, new Vector2Int(fromX, fromY), new Vector2Int(toX, toY));
+        _queue.Enqueue(_animation);
+        return _animation;
     }
 
     public Animation FadeIn()
     {
-        _animations = new Fade(_cell, true);
-        _queue.Enqueue(_animations);
-        return _animations;
+        _animation = new Fade(_cell, true);
+        _queue.Enqueue(_animation);
+        return _animation;
     }
 
     public Animation FadeOut()
     {
-        _animations = new Fade(_cell, false);
-        _queue.Enqueue(_animations);
-        return _animations;
+        _animation = new Fade(_cell, false);
+        _queue.Enqueue(_animation);
+        return _animation;
     }
 
     public Animation StretchFigure()
     {
-        _animations = new StretchFigure(_cell);
-        _queue.Enqueue(_animations);
-        return _animations;
+        _animation = new StretchFigure(_cell);
+        _queue.Enqueue(_animation);
+        return _animation;
     }
 
     public void Update()

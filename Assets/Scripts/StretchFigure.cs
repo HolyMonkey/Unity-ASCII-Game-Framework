@@ -15,7 +15,6 @@ public class StretchFigure : Animation
     public StretchFigure(Cell cell)
     {
         _cell = cell;
-        IsAnimating = true;
     }
 
     public override Animation Duration(float seconds)
@@ -26,11 +25,11 @@ public class StretchFigure : Animation
 
     public override void Start()
     {
-        if (IsAnimating == true)
-        {
-            _steps = _duration / 20;
-            _cellScale = new Vector2(_cell.Symbol.rectTransform.sizeDelta.x, _cell.Symbol.rectTransform.sizeDelta.y);
-        }
+        IsAnimating = true;
+
+        _steps = _duration / 20;
+        _cellScale = new Vector2(_cell.Symbol.rectTransform.sizeDelta.x, _cell.Symbol.rectTransform.sizeDelta.y);
+
     }
 
     public override void Update()

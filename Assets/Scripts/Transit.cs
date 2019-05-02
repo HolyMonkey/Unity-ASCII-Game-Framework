@@ -21,7 +21,6 @@ public class Transit : Animation
     public Transit(Grid grid, Vector2Int from, Vector2Int to)
     {
         _grid = grid;
-        IsAnimating = true;
         _fromPoint = from;
         _toPoint = to;
     }
@@ -34,22 +33,21 @@ public class Transit : Animation
 
     public override void Start()
     {
-        if (IsAnimating == true)
-        {
-            _dy = Mathf.Abs(_toPoint.y - _fromPoint.y);
-            _dx = Mathf.Abs(_toPoint.x - _fromPoint.x);
+        IsAnimating = true;
 
-            _step = 1;
-            _ystep = (_fromPoint.y <= _toPoint.y) ? 1 : -1;
-            _xstep = (_fromPoint.x <= _toPoint.x) ? 1 : -1;
+        _dy = Mathf.Abs(_toPoint.y - _fromPoint.y);
+        _dx = Mathf.Abs(_toPoint.x - _fromPoint.x);
 
-            _y = _fromPoint.y;
-            _x = _fromPoint.x;
-            _steps = _duration / Mathf.Max(Mathf.Abs(_toPoint.y - _fromPoint.y), Mathf.Abs(_toPoint.x - _fromPoint.x));
+        _step = 1;
+        _ystep = (_fromPoint.y <= _toPoint.y) ? 1 : -1;
+        _xstep = (_fromPoint.x <= _toPoint.x) ? 1 : -1;
 
-            _symbol = _grid.GetSymbol(_fromPoint.x, _fromPoint.y).Text;
-            _color = _grid.GetSymbol(_fromPoint.x, _fromPoint.y).Color;
-        }
+        _y = _fromPoint.y;
+        _x = _fromPoint.x;
+        _steps = _duration / Mathf.Max(Mathf.Abs(_toPoint.y - _fromPoint.y), Mathf.Abs(_toPoint.x - _fromPoint.x));
+
+        _symbol = _grid.GetSymbol(_fromPoint.x, _fromPoint.y).Text;
+        _color = _grid.GetSymbol(_fromPoint.x, _fromPoint.y).Color;
     }
 
     public override void Update()
