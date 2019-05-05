@@ -10,6 +10,13 @@ public class Cell : MonoBehaviour
     [SerializeField] private TextMeshPro _symbol;
     [SerializeField] private SpriteRenderer _background;
 
+    public Animations Animations;
+
+    private void Awake()
+    {
+        Animations = new Animations(this);
+    }
+
     public Color BackgroundColor
     {
         get => _background.color;
@@ -19,12 +26,24 @@ public class Cell : MonoBehaviour
         }
     }
 
+    public TextMeshPro Symbol
+    {
+        get
+        {
+            return _symbol;
+        }
+        set
+        {
+            _symbol = value;
+        }
+    }
+
     public string Text
     {
         get
         {
             return _symbol.text;
-        } 
+        }
         set
         {
             _symbol.text = value;
